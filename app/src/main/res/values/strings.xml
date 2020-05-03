@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Project PC Scanner</string>
+    <string name="welcome_text">¡Bienvenido!</string>
+    <string name="next_page">Next page</string>
+    <string name="logo">Logo</string>
+    <string name="link">¡Conectar!</string>
+    <string name="link_description">Para empezar, hay que conectarse a tu PC</string>
+</resources>
