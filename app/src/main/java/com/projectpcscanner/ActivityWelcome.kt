@@ -20,7 +20,7 @@ class ActivityWelcome : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val nextButton: FloatingActionButton = findViewById(R.id.nextFloatingButton)
-        nextButton.setOnClickListener{ _: View? ->
+        nextButton.setOnClickListener{
             val intent = Intent(this, ActivityLink::class.java)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
