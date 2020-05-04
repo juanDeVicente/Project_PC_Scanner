@@ -7,18 +7,25 @@ import java.io.InputStream
 import java.lang.Exception
 import java.lang.StringBuilder
 import java.net.HttpURLConnection
+import java.net.SocketTimeoutException
 import java.net.URL
 
 /**
  * No me convence el uso de Volley.RequestQueue por que cachea las peticiones http (?)
  */
-abstract class RequestTask : AsyncTask<String, Void, String>() {
-    override fun doInBackground(vararg params: String?): String {
+class RequestTask(private val listener: RequestTaskListener) : AsyncTask<String, Void, String>() {
+    override fun doInBackground(vararg params: String?): String? {
+        Log.d("URL", "${params[0]}:${params[1]}/${params[2]}")
         val url = URL("${params[0]}:${params[1]}/${params[2]}")
         val response: String
         val urlConnection: HttpURLConnection = url.openConnection() as HttpURLConnection
+        urlConnection.connectTimeout = 2000
         try {
             response = String(urlConnection.inputStream.readBytes())
+        }
+        catch (e: SocketTimeoutException)
+        {
+            return null
         }
         finally {
             urlConnection.disconnect()
@@ -28,11 +35,11 @@ abstract class RequestTask : AsyncTask<String, Void, String>() {
 
     override fun onPostExecute(result: String?) {
         super.onPostExecute(result)
-        onRequestComplete(result)
+        if (result != null)
+            listener.afterRequest(result)
     }
 
-    /**
-     * Para obligar al que use esta clase a hacer algo con los datos devueltos del servidor, se proporciona este metodo abstracto para que se tenga que definir
-     */
-    abstract fun onRequestComplete(rawResults: String?)
+    interface RequestTaskListener{
+        fun afterRequest(rawData: String)
+    }
 }
