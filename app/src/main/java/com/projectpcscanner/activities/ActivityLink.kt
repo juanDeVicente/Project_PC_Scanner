@@ -1,7 +1,8 @@
 package com.projectpcscanner.activities
 
 import android.Manifest
-import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -13,11 +14,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.projectpcscanner.R
 import com.projectpcscanner.tasks.BroadcastTask
-import com.projectpcscanner.tasks.RequestTask
 import com.projectpcscanner.utils.setActivityFullScreen
 
 
-class ActivityLink : AppCompatActivity() {
+class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener {
     /**
      * Variable que controla si se puede ir hacia atrás en la actividad
      */
@@ -74,15 +74,22 @@ class ActivityLink : AppCompatActivity() {
         val progressbar: ProgressBar = findViewById(R.id.linkProgressBar)
         progressbar.visibility = View.VISIBLE
 
-        @SuppressLint("StaticFieldLeak") // Hasta los cojones de android hostia, se lo que hago
-        val requestTask = object : RequestTask() {
-            override fun onRequestComplete(rawResults: String?) {
-                Log.d("Debug", rawResults)
-            }
-        }
-        //requestTask.execute("http://192.168.1.254", "5000", "statics")
-
         val broadcastTask = BroadcastTask(this)
         broadcastTask.execute()
+    }
+
+    override fun afterBroadcast(address: String) {
+        Log.d("IP", address)
+        val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)?: return
+        with(sharedPreferences.edit()) {
+            putString("address", address)
+            apply()
+        }
+        val intent = Intent(this, ActivityHome::class.java)
+        startActivity(intent)
+        overridePendingTransition(
+            R.anim.slide_in_right,
+            R.anim.slide_out_left
+        )
     }
 }

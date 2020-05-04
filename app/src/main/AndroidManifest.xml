@@ -4,7 +4,7 @@
     package="com.projectpcscanner">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -15,7 +15,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".activities.ActivityLink"/>
+        <activity android:name=".activities.ActivityHome"></activity>
+        <activity android:name=".activities.ActivityLink" />
         <activity android:name=".activities.ActivityWelcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

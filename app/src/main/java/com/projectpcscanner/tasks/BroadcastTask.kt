@@ -9,9 +9,10 @@ import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
 
-class BroadcastTask(private val context: Context): AsyncTask<Void, Void, Boolean>() {
-    override fun doInBackground(vararg params: Void?): Boolean {
-        val socket = DatagramSocket(5001)
+class BroadcastTask(private val listener: BroadcastTaskListener): AsyncTask<Void, Void, String>() {
+    private lateinit var socket: DatagramSocket
+    override fun doInBackground(vararg params: Void?): String {
+        socket = DatagramSocket(5001)
         socket.broadcast = true
         var packet = DatagramPacket(
             "".toByteArray(), 0,
@@ -22,13 +23,12 @@ class BroadcastTask(private val context: Context): AsyncTask<Void, Void, Boolean
         val buf = ByteArray(1024)
         packet = DatagramPacket(buf, buf.size)
         socket.receive(packet)
-        Log.d("PS", packet.address.hostAddress)
         socket.close()
-        return true
+        return packet.address.hostAddress
     }
     @Throws(IOException::class)
     fun getBroadcastAddress(): InetAddress? {
-        val wifi: WifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val wifi: WifiManager = listener.getApplicationContext().getSystemService(Context.WIFI_SERVICE) as WifiManager
         val info = wifi.dhcpInfo
         val broadcast = info.ipAddress and info.netmask or info.netmask.inv()
         val quads = ByteArray(4)
@@ -36,12 +36,19 @@ class BroadcastTask(private val context: Context): AsyncTask<Void, Void, Boolean
         return InetAddress.getByAddress(quads)
     }
 
-    override fun onPostExecute(result: Boolean?) {
+    override fun onPostExecute(result: String) {
         super.onPostExecute(result)
-        if (result == true)
-        {
-            Log.d("TEST", "Ha pasado algo!")
-        }
+        listener.afterBroadcast(result)
 
+    }
+
+    override fun onCancelled() {
+        super.onCancelled()
+        socket.close()
+    }
+
+    interface BroadcastTaskListener{
+        fun afterBroadcast(address: String)
+        fun getApplicationContext(): Context
     }
 }
