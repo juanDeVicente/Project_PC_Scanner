@@ -6,4 +6,5 @@
     <string name="logo">Logo</string>
     <string name="link">¡Conectar!</string>
     <string name="link_description">Para empezar, hay que conectarse a tu PC</string>
+    <string name="more_options">More Options</string>
 </resources>

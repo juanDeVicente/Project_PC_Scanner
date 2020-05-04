@@ -7,7 +7,6 @@ import androidx.appcompat.widget.Toolbar
 import com.projectpcscanner.R
 import com.projectpcscanner.utils.exitApplication
 import com.projectpcscanner.utils.setActivityFullScreen
-import kotlin.system.exitProcess
 
 class ActivityHome : AppCompatActivity() {
 
@@ -27,7 +26,7 @@ class ActivityHome : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.welcome_menu, menu)
+        menuInflater.inflate(R.menu.home_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
 }
