@@ -11,7 +11,7 @@ import java.net.InetAddress
 
 class BroadcastTask(private val context: Context): AsyncTask<Void, Void, Boolean>() {
     override fun doInBackground(vararg params: Void?): Boolean {
-        val socket = DatagramSocket(5000)
+        val socket = DatagramSocket(5001)
         socket.broadcast = true
         var packet = DatagramPacket(
             "".toByteArray(), 0,
@@ -23,7 +23,7 @@ class BroadcastTask(private val context: Context): AsyncTask<Void, Void, Boolean
         packet = DatagramPacket(buf, buf.size)
         socket.receive(packet)
         Log.d("PS", packet.address.hostAddress)
-
+        socket.close()
         return true
     }
     @Throws(IOException::class)
