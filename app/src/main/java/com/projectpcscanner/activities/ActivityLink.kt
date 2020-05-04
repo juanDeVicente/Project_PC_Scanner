@@ -1,17 +1,20 @@
 package com.projectpcscanner.activities
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.view.Window
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.projectpcscanner.R
+import com.projectpcscanner.tasks.BroadcastTask
+import com.projectpcscanner.tasks.RequestTask
+import com.projectpcscanner.utils.setActivityFullScreen
 
 
 class ActivityLink : AppCompatActivity() {
@@ -23,26 +26,27 @@ class ActivityLink : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        setActivityFullScreen(this)
         setContentView(R.layout.activity_link)
 
         val linkButton: Button = findViewById(R.id.linkButton)
         linkButton.setOnClickListener {
-            val permissionCheck: Int = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+            val permissionCheck: Int =
+                ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
             if (permissionCheck == PackageManager.PERMISSION_GRANTED)
                 startLink()
             else
-                ActivityCompat.requestPermissions(this, Array(1) {Manifest.permission.INTERNET}, internetPermissions)
+                ActivityCompat.requestPermissions(
+                    this,
+                    Array(1) { Manifest.permission.INTERNET },
+                    internetPermissions
+                )
         }
     }
 
     override fun finish() {
         super.finish()
-        overridePendingTransition(
-            R.anim.slide_in_left,
-            R.anim.slide_out_right
-        )
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 
     override fun onBackPressed() {
@@ -51,8 +55,7 @@ class ActivityLink : AppCompatActivity() {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode)
-        {
+        when (requestCode) {
             internetPermissions -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED))
                     startLink()
@@ -70,5 +73,16 @@ class ActivityLink : AppCompatActivity() {
         linkButton.isEnabled = false
         val progressbar: ProgressBar = findViewById(R.id.linkProgressBar)
         progressbar.visibility = View.VISIBLE
+
+        @SuppressLint("StaticFieldLeak") // Hasta los cojones de android hostia, se lo que hago
+        val requestTask = object : RequestTask() {
+            override fun onRequestComplete(rawResults: String?) {
+                Log.d("Debug", rawResults)
+            }
+        }
+        //requestTask.execute("http://192.168.1.254", "5000", "statics")
+
+        val broadcastTask = BroadcastTask(this)
+        broadcastTask.execute()
     }
 }

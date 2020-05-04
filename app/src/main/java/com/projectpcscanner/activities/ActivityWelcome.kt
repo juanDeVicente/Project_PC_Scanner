@@ -10,13 +10,13 @@ import android.view.WindowManager
 import android.widget.TextView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.projectpcscanner.R
+import com.projectpcscanner.utils.setActivityFullScreen
 
 class ActivityWelcome : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        setActivityFullScreen(this)
         setContentView(R.layout.activity_main)
 
         val nextButton: FloatingActionButton = findViewById(R.id.nextFloatingButton)
