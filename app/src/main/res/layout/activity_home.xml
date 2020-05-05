@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.ActivityHome">
+    tools:context=".activities.ActivityHome"
+    android:keepScreenOn="true">
     <include
         android:id="@+id/toolbar"
         layout="@layout/home_toolbar" />

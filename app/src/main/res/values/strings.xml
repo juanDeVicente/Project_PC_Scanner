@@ -10,4 +10,5 @@
     <string name="dialog_network_error_title">Error de conexión</string>
     <string name="dialog_network_error_content">Parece que no ha sido posible establecer conexión con el servidor</string>
     <string name="help_icon">help icon</string>
+    <string name="search">Search</string>
 </resources>
