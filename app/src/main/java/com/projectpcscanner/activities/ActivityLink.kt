@@ -16,12 +16,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.projectpcscanner.R
+import com.projectpcscanner.fragments.dialogs.DialogFragmentNetworkError
 import com.projectpcscanner.tasks.BroadcastTask
 import com.projectpcscanner.utils.exitApplication
 import com.projectpcscanner.utils.setActivityFullScreen
 
 
-class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener {
+class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, DialogFragmentNetworkError.DialogFragmentNetworkErrorListener {
     /**
      * Variable que controla si se puede ir hacia atrás en la actividad
      */
@@ -89,20 +90,8 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener {
     override fun errorBroadcast() {
         enableUI()
 
-        val builder: AlertDialog.Builder? = let {
-            val builder = AlertDialog.Builder(it)
-            builder.apply {
-                setPositiveButton("Reintentar") { _, _ ->
-                    startLink()
-                }
-                setNegativeButton("Cerrar la app") { _, _ ->
-                    exitApplication(this@ActivityLink)
-                }
-            }
-        }
-        builder?.setMessage("Parece que no ha sido posible establecer conexión con el servidor")?.setTitle("Error de conexión")
-        val dialog: AlertDialog? = builder?.create()
-        dialog?.show()
+        val dialogFragmentNetworkError = DialogFragmentNetworkError()
+        dialogFragmentNetworkError.show(supportFragmentManager, "networkError")
     }
 
     private fun startLink() {
@@ -126,5 +115,13 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener {
         linkButton.isEnabled = true
         val progressbar: ProgressBar = findViewById(R.id.linkProgressBar)
         progressbar.visibility = View.INVISIBLE
+    }
+
+    override fun onPositiveButton() {
+        startLink()
+    }
+
+    override fun onNegativeButton() {
+        exitApplication(this)
     }
 }
