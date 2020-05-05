@@ -14,8 +14,16 @@ import java.net.URL
  * No me convence el uso de Volley.RequestQueue por que cachea las peticiones http (?)
  */
 class RequestTask(private val listener: RequestTaskListener) : AsyncTask<String, Void, String>() {
+    private lateinit var tag: String
+
     override fun doInBackground(vararg params: String?): String? {
         Log.d("URL", "${params[0]}:${params[1]}/${params[2]}")
+        tag = try {
+            params[3]
+        } catch (e: ArrayIndexOutOfBoundsException) {
+            ""
+        } as String
+
         val url = URL("${params[0]}:${params[1]}/${params[2]}")
         val response: String
         val urlConnection: HttpURLConnection = url.openConnection() as HttpURLConnection
@@ -36,10 +44,10 @@ class RequestTask(private val listener: RequestTaskListener) : AsyncTask<String,
     override fun onPostExecute(result: String?) {
         super.onPostExecute(result)
         if (result != null)
-            listener.afterRequest(result)
+            listener.afterRequest(result, this.tag)
     }
 
     interface RequestTaskListener{
-        fun afterRequest(rawData: String)
+        fun afterRequest(rawData: String, tag: String)
     }
 }
