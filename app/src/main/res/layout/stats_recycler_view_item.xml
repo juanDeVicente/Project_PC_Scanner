@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="24dp">
+
+    <TextView
+        android:id="@+id/staticNameTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.vaibhavlakhera.circularprogressview.CircularProgressView
+        android:id="@+id/progressView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:animate="true"
+        app:animateDuration="600"
+        app:fillColor="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/staticNameTextView"
+        app:progressColor="@color/colorPrimary"
+        app:progressRoundCap="true"
+        app:progressTextColor="#FFF"
+        app:progressTextEnabled="true"
+        app:progressTextSize="24dp"
+        app:progressTextType="progress"
+        app:progressValue="0"
+        app:progressWidth="12dp"
+        app:startAngle="270"
+        app:totalColor="#f6f6f6"
+        app:totalValue="100"
+        app:totalWidth="12dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
