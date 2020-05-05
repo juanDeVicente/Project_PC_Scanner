@@ -1,14 +1,35 @@
 package com.projectpcscanner.activities
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
+import android.content.res.Configuration
+import android.os.AsyncTask
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.view.Menu
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.projectpcscanner.R
+import com.projectpcscanner.models.StaticsModel
+import com.projectpcscanner.recycleviewadapters.StatsRecycleViewAdapter
+import com.projectpcscanner.tasks.RequestTask
 import com.projectpcscanner.utils.exitApplication
 import com.projectpcscanner.utils.setActivityFullScreen
+import org.json.JSONObject
 
-class ActivityHome : AppCompatActivity() {
+
+class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener {
+    private var staticsTag = "statics"
+
+    private lateinit var map: MutableMap<String, StaticsModel>
+    private var data: MutableList<StaticsModel> = mutableListOf()
+
+    private lateinit var adapter: StatsRecycleViewAdapter
+
+    private val handler = Handler()
+    private val delay = 1000 //milliseconds
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,6 +40,32 @@ class ActivityHome : AppCompatActivity() {
         toolbar.title = "PC Scanner"
         toolbar.navigationIcon = getDrawable(R.drawable.baseline_menu_24)
         setSupportActionBar(toolbar)
+
+        map = mutableMapOf()
+        val recyclerView = findViewById<RecyclerView>(R.id.staticsRecyclerView)
+
+        val layoutManager = if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+            GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false)
+        else
+            GridLayoutManager(this, 4, GridLayoutManager.VERTICAL, false)
+
+        recyclerView.layoutManager = layoutManager
+
+        data = map.values.toMutableList()
+        adapter = StatsRecycleViewAdapter(data)
+        recyclerView.adapter = adapter
+
+        val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)?: return
+        val address = sharedPreferences.getString("address", null)
+
+        handler.postDelayed(object : Runnable {
+            override fun run() {
+                val staticsRequestTask = RequestTask(this@ActivityHome)
+                staticsRequestTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "http://${address}", "5000", "statics", staticsTag)
+                handler.postDelayed(this, delay.toLong())
+            }
+        }, 0) //0 por que al principio quiero que se mande una petición para obtener los datos
+
     }
 
     override fun onBackPressed() {
@@ -28,5 +75,33 @@ class ActivityHome : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.home_menu, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun afterRequest(rawData: String, tag: String) {
+        if (tag == staticsTag) {
+            Log.d("ActivityHome", rawData)
+            val jsonObject = JSONObject(rawData)
+            Log.d("json", jsonObject.getJSONArray("elements").toString())
+            for (i in 0 until jsonObject.getJSONArray("elements").length()) {
+                val jsonData = jsonObject.getJSONArray("elements").getJSONObject(i)
+                val model = StaticsModel(
+                    jsonData.getString("name"),
+                    jsonData.getDouble("current_value").toFloat(),
+                    jsonData.getDouble("min_value").toFloat(),
+                    jsonData.getDouble("max_value").toFloat(),
+                    jsonData.getBoolean("relative")
+                )
+                map[model.name] = model
+            }
+            for (j  in map.values.indices)
+                if (j < data.size)
+                    data[j] = map.values.toList()[j]
+                else
+                    data.add(map.values.toList()[j])
+
+            Log.d("map", data.toString())
+            adapter.notifyDataSetChanged()
+
+        }
     }
 }
