@@ -8,6 +8,8 @@ import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -74,6 +76,22 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.home_menu, menu)
+        val searchItem = menu?.findItem(R.id.search)
+        val searchView = searchItem?.actionView as SearchView
+        searchView.queryHint = "Introduce un filtro"
+        searchView.setOnQueryTextListener(object : OnQueryTextListener {
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                adapter.filter.filter(newText)
+                return false
+            }
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                adapter.filter.filter(query)
+                return false
+            }
+
+        })
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -101,7 +119,6 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener {
 
             Log.d("map", data.toString())
             adapter.notifyDataSetChanged()
-
         }
     }
 }
