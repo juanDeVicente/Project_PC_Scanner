@@ -72,7 +72,7 @@ class ActivityWelcome : AppCompatActivity(), HelloTask.HelloTaskListener, Reques
         }
     }
 
-    override fun afterRequest(rawData: String) {
+    override fun afterRequest(rawData: String, tag: String) {
         helloTask.cancel(true)
         val nextButton: FloatingActionButton = findViewById(R.id.nextFloatingButton)
         nextButton.setOnClickListener{
