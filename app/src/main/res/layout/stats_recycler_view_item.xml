@@ -14,12 +14,14 @@
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <com.vaibhavlakhera.circularprogressview.CircularProgressView
         android:id="@+id/progressView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:transitionName="detail_transition_item"
         app:animate="true"
         app:animateDuration="600"
         app:fillColor="@null"
@@ -32,11 +34,12 @@
         app:progressTextColor="#FFF"
         app:progressTextEnabled="true"
         app:progressTextSize="24dp"
-        app:progressTextType="progress"
+        app:progressTextType="percent"
         app:progressValue="0"
         app:progressWidth="12dp"
         app:startAngle="270"
         app:totalColor="#f6f6f6"
         app:totalValue="100"
         app:totalWidth="12dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

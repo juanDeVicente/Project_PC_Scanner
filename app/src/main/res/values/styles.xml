@@ -11,6 +11,7 @@
         <item name="tint">@color/colorText</item>
         <item name="android:background">@color/dark</item>
         <item name="android:textColorSecondary">@color/colorText</item>
+        <item name="android:textColorHint">@color/colorText</item>
     </style>
 
 </resources>
