@@ -56,18 +56,6 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener {
         data = map.values.toMutableList()
         adapter = StatsRecycleViewAdapter(data)
         recyclerView.adapter = adapter
-
-        val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)?: return
-        val address = sharedPreferences.getString("address", null)
-
-        handler.postDelayed(object : Runnable {
-            override fun run() {
-                val staticsRequestTask = RequestTask(this@ActivityHome)
-                staticsRequestTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "http://${address}", "5000", "statics", staticsTag)
-                handler.postDelayed(this, delay.toLong())
-            }
-        }, 0) //0 por que al principio quiero que se mande una petición para obtener los datos
-
     }
 
     override fun onBackPressed() {
@@ -90,25 +78,15 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener {
                 adapter.filter.filter(query)
                 return false
             }
-
         })
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun afterRequest(rawData: String, tag: String) {
         if (tag == staticsTag) {
-            Log.d("ActivityHome", rawData)
             val jsonObject = JSONObject(rawData)
-            Log.d("json", jsonObject.getJSONArray("elements").toString())
             for (i in 0 until jsonObject.getJSONArray("elements").length()) {
-                val jsonData = jsonObject.getJSONArray("elements").getJSONObject(i)
-                val model = StaticsModel(
-                    jsonData.getString("name"),
-                    jsonData.getDouble("current_value").toFloat(),
-                    jsonData.getDouble("min_value").toFloat(),
-                    jsonData.getDouble("max_value").toFloat(),
-                    jsonData.getBoolean("relative")
-                )
+                val model = StaticsModel(jsonObject.getJSONArray("elements").getJSONObject(i))
                 map[model.name] = model
             }
             for (j  in map.values.indices)
@@ -117,8 +95,30 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener {
                 else
                     data.add(map.values.toList()[j])
 
-            Log.d("map", data.toString())
             adapter.notifyDataSetChanged()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacksAndMessages(null)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        startRequestStatics()
+    }
+    private fun startRequestStatics() {
+        Log.d("requestStatics", "He sido llamado")
+        val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)?: return
+        val address = sharedPreferences.getString("address", null)
+        handler.postDelayed(object : Runnable {
+            override fun run() {
+                val staticsRequestTask = RequestTask(this@ActivityHome)
+                staticsRequestTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "http://${address}", "5000", "statics", staticsTag)
+                Log.d("Handler", "Ejecuto")
+                handler.postDelayed(this, delay.toLong())
+            }
+        }, 0) //0 por que al principio quiero que se mande una petición para obtener los datos
     }
 }
