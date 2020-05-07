@@ -5,6 +5,7 @@ import android.util.Log
 import java.io.BufferedInputStream
 import java.io.InputStream
 import java.lang.Exception
+import java.lang.RuntimeException
 import java.lang.StringBuilder
 import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
@@ -17,7 +18,6 @@ class RequestTask(private val listener: RequestTaskListener) : AsyncTask<String,
     private lateinit var tag: String
 
     override fun doInBackground(vararg params: String?): String? {
-        Log.d("URL", "${params[0]}:${params[1]}/${params[2]}")
         tag = try {
             params[3]
         } catch (e: ArrayIndexOutOfBoundsException) {
@@ -32,6 +32,10 @@ class RequestTask(private val listener: RequestTaskListener) : AsyncTask<String,
             response = String(urlConnection.inputStream.readBytes())
         }
         catch (e: SocketTimeoutException)
+        {
+            return null
+        }
+        catch (e: RuntimeException)
         {
             return null
         }
