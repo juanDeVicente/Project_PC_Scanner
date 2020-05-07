@@ -15,7 +15,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".activities.ActivityHome"></activity>
+        <activity android:name=".activities.ActivityStaticDetail"></activity>
+        <activity android:name=".activities.ActivityHome" />
         <activity android:name=".activities.ActivityLink" />
         <activity android:name=".activities.ActivityWelcome">
             <intent-filter>
