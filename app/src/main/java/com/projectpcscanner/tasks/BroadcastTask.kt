@@ -32,7 +32,6 @@ class BroadcastTask(private val listener: BroadcastTaskListener): AsyncTask<Void
                 socket.receive(packet)
                 break
             } catch (e: SocketTimeoutException) {
-                Log.d("Iteracion $i", "Error")
                 i++
                 socket.close()
             }
