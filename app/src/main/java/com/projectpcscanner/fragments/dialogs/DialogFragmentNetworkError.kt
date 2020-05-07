@@ -49,14 +49,12 @@ class DialogFragmentNetworkError() : DialogFragment() {
             }
 
             builder.setView(view)
-                .setPositiveButton("Reintentar",
-                    DialogInterface.OnClickListener { dialog, id ->
-                        listener.onPositiveButton()
-                    })
-                .setNegativeButton("Cerrar app",
-                    DialogInterface.OnClickListener { dialog, id ->
-                        listener.onNegativeButton()
-                    })
+                .setPositiveButton("Reintentar") { _, _ ->
+                    listener.onPositiveButton()
+                }
+                .setNegativeButton("Cerrar app") { _, _ ->
+                    listener.onNegativeButton()
+                }
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }
