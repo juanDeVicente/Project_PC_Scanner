@@ -1,5 +1,9 @@
 package com.projectpcscanner.recycleviewadapters
 
+import android.app.Activity
+import android.app.ActivityOptions
+import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +12,7 @@ import android.widget.Filterable
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.projectpcscanner.R
+import com.projectpcscanner.activities.ActivityStaticDetail
 import com.projectpcscanner.models.StaticsModel
 import com.vaibhavlakhera.circularprogressview.CircularProgressView
 import java.util.*
@@ -29,21 +34,25 @@ class StatsRecycleViewAdapter(private val staticsModel: MutableList<StaticsModel
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val model = staticsModel[staticsModel.indexOf(staticsModelFiltered[position])]
+        holder.view.setOnClickListener{
+            val progressView = it.findViewById<View>(R.id.progressView)
+            val options = ActivityOptions.makeSceneTransitionAnimation(it.context as Activity, progressView, "detail_transition_item")
+
+            val intent = Intent(it.context, ActivityStaticDetail::class.java)
+            Log.d("send_values", "${model.name} ${model.maxValue}, ${model.currentValue}")
+            intent.putExtra("name", model.name)
+            intent.putExtra("currentValue", model.currentValue)
+            intent.putExtra("maxValue", model.maxValue)
+
+            it.context.startActivity(intent, options.toBundle())
+        }
         val staticNameTextView = holder.view.findViewById<TextView>(R.id.staticNameTextView)
         val progressView = holder.view.findViewById<CircularProgressView>(R.id.progressView)
 
         staticNameTextView.text = model.name
-        if (model.relative)
-        {
-            progressView.setTotal(100)
-            progressView.setProgress(((100 * model.currentValue)/model.maxValue).toInt(), true)
-            progressView.setProgressTextType(CircularProgressView.PROGRESS_TEXT_TYPE_PERCENT)
-        }
-        else
-        {
-            progressView.setTotal(model.maxValue.toInt())
-            progressView.setProgress(model.currentValue.toInt(), true)
-        }
+
+        progressView.setTotal(100)
+        progressView.setProgress(((100 * model.currentValue)/model.maxValue).toInt(), true)
     }
 
     override fun getFilter(): Filter {
