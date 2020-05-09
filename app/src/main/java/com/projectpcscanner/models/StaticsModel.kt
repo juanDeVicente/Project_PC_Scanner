@@ -3,7 +3,7 @@ package com.projectpcscanner.models
 import com.projectpcscanner.utils.toMap
 import org.json.JSONObject
 
-class StaticsModel(val name: String, val currentValue: Float, val minValue: Float, val maxValue: Float, val scalingFactor: Float, val measurementUnit: String, val details: Map<String, String>)
+class StaticsModel(val name: String, var currentValue: Float, val minValue: Float, val maxValue: Float, val scalingFactor: Float, val measurementUnit: String, var details: Map<String, String>)
 {
     constructor(jsonObject: JSONObject): this(
         jsonObject.getString("name"),
