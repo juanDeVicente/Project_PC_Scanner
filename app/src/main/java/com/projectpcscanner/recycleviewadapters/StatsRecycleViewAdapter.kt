@@ -43,6 +43,10 @@ class StatsRecycleViewAdapter(private val staticsModel: MutableList<StaticsModel
             intent.putExtra("name", model.name)
             intent.putExtra("currentValue", model.currentValue)
             intent.putExtra("maxValue", model.maxValue)
+            intent.putExtra("scalingFactor", model.scalingFactor)
+            intent.putExtra("measurementUnit", model.measurementUnit)
+            intent.putStringArrayListExtra("detailName", ArrayList(model.details.keys))
+            intent.putStringArrayListExtra("detailValue", ArrayList(model.details.values))
 
             it.context.startActivity(intent, options.toBundle())
         }

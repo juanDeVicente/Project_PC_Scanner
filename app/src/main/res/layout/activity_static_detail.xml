@@ -69,39 +69,63 @@
         android:id="@+id/staticDetailCurrentValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:layout_marginStart="8dp"
+        android:text="@string/current_value"
+        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/staticDetailHorizontalDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/staticDetailVerticalDivider"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.35000002" />
+        app:layout_constraintTop_toTopOf="@+id/staticDetailProgressView"
+        app:layout_constraintVertical_bias="0.1" />
+
+    <TextView
+        android:id="@+id/currentValueDisplay"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="28sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/staticDetailCurrentValue"
+        app:layout_constraintTop_toBottomOf="@+id/staticDetailCurrentValue" />
 
     <TextView
         android:id="@+id/staticDetailMaxValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:text="@string/max_value"
+        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/staticDetailHorizontalDivider"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/staticDetailVerticalDivider"
-        app:layout_constraintTop_toBottomOf="@+id/staticDetailCurrentValue" />
+        app:layout_constraintStart_toStartOf="@+id/staticDetailCurrentValue"
+        app:layout_constraintTop_toTopOf="@+id/staticDetailProgressView"
+        app:layout_constraintVertical_bias="0.6" />
+
+    <TextView
+        android:id="@+id/maxValueDisplay"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="28sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/staticDetailMaxValue"
+        app:layout_constraintTop_toBottomOf="@+id/staticDetailMaxValue" />
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/staticDetailHorizontalDivider" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/detailRecyclerView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chart" />
