@@ -12,6 +12,13 @@
     <string name="help_icon">help icon</string>
     <string name="search">Search</string>
     <string name="detail_transition_item">detailTransitionItem</string>
-    <string name="current_value">Valor actual</string>
-    <string name="max_value">Valor máximo</string>
+    <string name="current_value">Valor actual:</string>
+    <string name="max_value">Valor máximo:</string>
+    <string name="circlepointer">circlePointer</string>
+    <string name="temperature">Temperatura</string>
+    <string name="voltage">Voltaje</string>
+    <string name="number_of_cores">Número de núcleos</string>
+    <string name="disk_type">Tipo de disco</string>
+    <string name="solid_state">SSD</string>
+    <string name="hard_state">HDD </string>
 </resources>
