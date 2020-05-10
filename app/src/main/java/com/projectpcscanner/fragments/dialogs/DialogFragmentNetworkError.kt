@@ -1,20 +1,17 @@
 package com.projectpcscanner.fragments.dialogs
 
+import android.app.Activity
 import android.app.Dialog
-import android.content.ActivityNotFoundException
 import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageButton
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.projectpcscanner.R
-import com.projectpcscanner.models.StaticsModel
+import com.projectpcscanner.utils.openWebNavigator
 
 
-class DialogFragmentNetworkError() : DialogFragment() {
+class DialogFragmentNetworkError : DialogFragment() {
     private lateinit var listener: DialogFragmentNetworkErrorListener
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -36,23 +33,14 @@ class DialogFragmentNetworkError() : DialogFragment() {
 
             val helpButton: ImageButton = view.findViewById(R.id.helpButtonNetworkError)
             helpButton.setOnClickListener {
-                val urlString = "https://github.com/juanDeVicente"
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlString))
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                intent.setPackage("com.android.chrome")
-                try {
-                    context!!.startActivity(intent)
-                } catch (e: ActivityNotFoundException) {
-                    intent.setPackage(null)
-                    context!!.startActivity(intent)
-                }
+                openWebNavigator(listener.getActivity(),"https://github.com/juanDeVicente")
             }
 
             builder.setView(view)
-                .setPositiveButton("Reintentar") { _, _ ->
+                .setPositiveButton(getString(R.string.retry)) { _, _ ->
                     listener.onPositiveButton()
                 }
-                .setNegativeButton("Cerrar app") { _, _ ->
+                .setNegativeButton(getString(R.string.close)) { _, _ ->
                     listener.onNegativeButton()
                 }
             builder.create()
@@ -62,5 +50,6 @@ class DialogFragmentNetworkError() : DialogFragment() {
     interface DialogFragmentNetworkErrorListener {
         fun onPositiveButton()
         fun onNegativeButton()
+        fun getActivity(): Activity
     }
 }

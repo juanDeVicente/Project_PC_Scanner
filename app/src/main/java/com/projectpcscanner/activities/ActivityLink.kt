@@ -1,6 +1,7 @@
 package com.projectpcscanner.activities
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -123,5 +124,9 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
 
     override fun onNegativeButton() {
         exitApplication(this)
+    }
+
+    override fun getActivity(): Activity {
+        return this
     }
 }
