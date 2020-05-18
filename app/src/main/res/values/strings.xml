@@ -21,4 +21,18 @@
     <string name="disk_type">Tipo de disco</string>
     <string name="solid_state">SSD</string>
     <string name="hard_state">HDD </string>
+    <string name="retry">Reintentar</string>
+    <string name="close">Salir</string>
+    <string name="nd_properties">Propiedades</string>
+    <string name="nd_data">Datos</string>
+    <string name="nd_info">Acerca de</string>
+    <string name="ndLogo">ndLogo</string>
+    <string name="contact">Contacto</string>
+    <string name="nd_supportTitle">Soporte</string>
+    <string name="help">Ayuda</string>
+    <string name="otherTitle">Otros</string>
+    <string name="repository">Repositorio</string>
+    <string name="pc_name">Nombre del PC</string>
+    <string name="ipv4">IPV4</string>
+    <string name="ipv6">IPV6</string>
 </resources>

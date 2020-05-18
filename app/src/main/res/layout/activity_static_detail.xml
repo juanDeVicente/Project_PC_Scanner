@@ -1,133 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="8dp"
-    tools:context=".activities.ActivityStaticDetail">
+    android:fillViewport="true">
 
-    <com.vaibhavlakhera.circularprogressview.CircularProgressView
-        android:id="@+id/staticDetailProgressView"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/activityStaticDetailConstraintLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:transitionName="detail_transition_item"
-        app:animate="true"
-        app:animateDuration="600"
-        app:fillColor="@null"
-        app:layout_constraintEnd_toStartOf="@+id/staticDetailVerticalDivider"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/staticDetailHeader"
-        app:progressColor="@color/colorPrimary"
-        app:progressRoundCap="true"
-        app:progressTextColor="#FFF"
-        app:progressTextEnabled="false"
-        app:progressTextSize="36dp"
-        app:progressTextType="percent"
-        app:progressValue="0"
-        app:progressWidth="12dp"
-        app:startAngle="270"
-        app:totalColor="#f6f6f6"
-        app:totalValue="100"
-        app:totalWidth="12dp" />
-
-    <View
-        android:id="@+id/staticDetailVerticalDivider"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toTopOf="@+id/staticDetailHorizontalDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.55"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/staticDetailHorizontalDivider"
-        android:layout_width="409dp"
-        android:layout_height="1dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/staticDetailProgressView"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/staticDetailHeader"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textSize="30sp"
-        app:layout_constraintEnd_toStartOf="@+id/staticDetailVerticalDivider"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
-    <TextView
-        android:id="@+id/staticDetailCurrentValue"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="@string/current_value"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/staticDetailHorizontalDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/staticDetailVerticalDivider"
-        app:layout_constraintTop_toTopOf="@+id/staticDetailProgressView"
-        app:layout_constraintVertical_bias="0.1" />
-
-    <TextView
-        android:id="@+id/currentValueDisplay"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textSize="28sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/staticDetailCurrentValue"
-        app:layout_constraintTop_toBottomOf="@+id/staticDetailCurrentValue" />
-
-    <TextView
-        android:id="@+id/staticDetailMaxValue"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/max_value"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/staticDetailHorizontalDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/staticDetailCurrentValue"
-        app:layout_constraintTop_toTopOf="@+id/staticDetailProgressView"
-        app:layout_constraintVertical_bias="0.6" />
-
-    <TextView
-        android:id="@+id/maxValueDisplay"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textSize="28sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/staticDetailMaxValue"
-        app:layout_constraintTop_toBottomOf="@+id/staticDetailMaxValue" />
-
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chart"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/staticDetailHorizontalDivider" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/detailRecyclerView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chart" />
+        tools:context=".activities.ActivityStaticDetail">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.vaibhavlakhera.circularprogressview.CircularProgressView
+            android:id="@+id/staticDetailProgressView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:transitionName="detail_transition_item"
+            app:animate="true"
+            app:animateDuration="600"
+            app:fillColor="@null"
+            app:layout_constrainedHeight="false"
+            app:layout_constraintEnd_toStartOf="@+id/staticDetailVerticalDivider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/staticDetailHeader"
+            app:progressColor="@color/colorPrimary"
+            app:progressRoundCap="true"
+            app:progressTextColor="#FFF"
+            app:progressTextEnabled="false"
+            app:progressTextSize="36dp"
+            app:progressTextType="percent"
+            app:progressValue="0"
+            app:progressWidth="12dp"
+            app:startAngle="270"
+            app:totalColor="#f6f6f6"
+            app:totalValue="100"
+            app:totalWidth="12dp" />
+
+        <View
+            android:id="@+id/staticDetailVerticalDivider"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/staticDetailHorizontalDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.55"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/staticDetailHorizontalDivider"
+            android:layout_width="409dp"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/staticDetailProgressView"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/staticDetailHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toStartOf="@+id/staticDetailVerticalDivider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/staticDetailCurrentValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/current_value"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toTopOf="@+id/staticDetailHorizontalDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/staticDetailVerticalDivider"
+            app:layout_constraintTop_toTopOf="@+id/staticDetailProgressView"
+            app:layout_constraintVertical_bias="0.1" />
+
+        <TextView
+            android:id="@+id/currentValueDisplay"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="28sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/staticDetailCurrentValue"
+            app:layout_constraintTop_toBottomOf="@+id/staticDetailCurrentValue" />
+
+        <TextView
+            android:id="@+id/staticDetailMaxValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/max_value"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toTopOf="@+id/staticDetailHorizontalDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/staticDetailCurrentValue"
+            app:layout_constraintTop_toTopOf="@+id/staticDetailProgressView"
+            app:layout_constraintVertical_bias="0.6" />
+
+        <TextView
+            android:id="@+id/maxValueDisplay"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="28sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/staticDetailMaxValue"
+            app:layout_constraintTop_toBottomOf="@+id/staticDetailMaxValue" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_margin="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/staticDetailHorizontalDivider" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/detailRecyclerViewStaticDetail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chart" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

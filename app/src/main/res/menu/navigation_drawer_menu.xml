@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group>
+        <item
+            android:id="@+id/navigation_properties"
+            android:icon="@drawable/baseline_desktop_windows_24"
+            android:title="@string/nd_properties"
+            />
+        <item
+            android:id="@+id/navigation_data"
+            android:icon="@drawable/baseline_timeline_24"
+            android:title="@string/nd_data" />
+    </group>
+    <item android:title="@string/nd_supportTitle">
+        <menu>
+            <item
+                android:id="@+id/navigation_contact"
+                android:icon="@android:drawable/ic_dialog_email"
+                android:title="@string/contact" />
+            <item
+                android:id="@+id/navigation_help"
+                android:icon="@drawable/baseline_help_outline_24"
+                android:title="@string/help" />
+        </menu>
+    </item>
+    <item android:title="@string/otherTitle">
+        <menu>
+            <item
+                android:id="@+id/navigation_repo"
+                android:icon="@drawable/baseline_github_logo_24"
+                android:title="@string/repository" />
+            <item
+                android:id="@+id/navigation_close"
+                android:icon="@drawable/baseline_close_24"
+                android:title="@string/close" />
+        </menu>
+    </item>
+
+</menu>
