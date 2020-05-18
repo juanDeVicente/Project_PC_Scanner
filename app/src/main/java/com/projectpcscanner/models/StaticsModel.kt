@@ -20,4 +20,15 @@ class StaticsModel(val name: String, var currentValue: Float, val minValue: Floa
             return other.name == name
         return super.equals(other)
     }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + currentValue.hashCode()
+        result = 31 * result + minValue.hashCode()
+        result = 31 * result + maxValue.hashCode()
+        result = 31 * result + scalingFactor.hashCode()
+        result = 31 * result + measurementUnit.hashCode()
+        result = 31 * result + details.hashCode()
+        return result
+    }
 }
