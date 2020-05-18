@@ -1,34 +1,57 @@
 package com.projectpcscanner.activities
 
 import android.content.Context
+import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.DashPathEffect
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.util.TypedValue
 import android.view.KeyEvent
+import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Transition
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.YAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IFillFormatter
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import com.github.mikephil.charting.utils.Utils
 import com.projectpcscanner.R
 import com.projectpcscanner.models.StaticsModel
 import com.projectpcscanner.recycleviewadapters.DetailsRecycleViewAdapter
+import com.projectpcscanner.tasks.DatabaseGetValuesTask
+import com.projectpcscanner.tasks.DatabaseValueTask
 import com.projectpcscanner.tasks.RequestTask
 import com.projectpcscanner.utils.setActivityFullScreen
 import com.projectpcscanner.utils.toMap
 import com.vaibhavlakhera.circularprogressview.CircularProgressView
 import org.json.JSONObject
+import java.util.*
+import kotlin.collections.ArrayList
 
-class ActivityStaticDetail : AppCompatActivity(), RequestTask.RequestTaskListener {
+class ActivityStaticDetail : AppCompatActivity(), RequestTask.RequestTaskListener, DatabaseGetValuesTask.Listener {
     private lateinit var progressView: CircularProgressView
     private lateinit var detailAdapter: DetailsRecycleViewAdapter
 
     private lateinit var model: StaticsModel
+    private lateinit var currentDate: Date
 
     private val handler = Handler()
     private val delay = 1000
     private val staticsTag = "STATICS"
+
+    private lateinit var chart: LineChart
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -52,6 +75,23 @@ class ActivityStaticDetail : AppCompatActivity(), RequestTask.RequestTaskListene
             intent.getStringExtra("measurementUnit")!!,
             details
         )
+
+        currentDate = Date(intent.getLongExtra("date", System.currentTimeMillis()))
+
+        val cl: ConstraintLayout = findViewById(R.id.activityStaticDetailConstraintLayout)
+        val cs = ConstraintSet()
+        cs.clone(cl)
+        if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+            cs.setHorizontalBias(R.id.staticDetailVerticalDivider, 0.55f)
+        else
+            cs.setHorizontalBias(R.id.staticDetailVerticalDivider, 0.33f)
+        cs.applyTo(cl)
+
+        val params = findViewById<View>(R.id.detailRecyclerViewStaticDetail).layoutParams
+        params.height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 38f * model.details.size, resources.displayMetrics).toInt()
+
+        findViewById<View>(R.id.detailRecyclerViewStaticDetail).layoutParams = params
+        findViewById<View>(R.id.detailRecyclerViewStaticDetail).requestLayout()
 
         //Android, que es muy comodo xd
         window.sharedElementEnterTransition.addListener (object: Transition.TransitionListener,
@@ -77,6 +117,33 @@ class ActivityStaticDetail : AppCompatActivity(), RequestTask.RequestTaskListene
         val headerTextView = findViewById<TextView>(R.id.staticDetailHeader)
         headerTextView.text = model.name
         setUpView(false)
+
+        chart = findViewById(R.id.chart)
+        chart.setDrawGridBackground(false)
+
+        chart.isDragEnabled = false
+        chart.setScaleEnabled(false)
+
+        chart.setDrawBorders(true)
+        chart.setBorderColor(Color.WHITE)
+
+        chart.description.isEnabled = false
+        chart.isClickable = false
+
+        var yAxis: YAxis
+        run {
+            yAxis = chart.axisLeft
+
+            chart.axisRight.isEnabled = false
+
+            yAxis.axisMaximum = model.maxValue/model.scalingFactor
+            yAxis.axisMinimum = model.minValue
+            yAxis.textColor = Color.WHITE
+        }
+
+        chart.legend.isEnabled = false
+        chart.isHighlightPerDragEnabled = false
+        chart.isHighlightPerTapEnabled = false
     }
     override fun onPause() {
         super.onPause()
@@ -95,6 +162,10 @@ class ActivityStaticDetail : AppCompatActivity(), RequestTask.RequestTaskListene
             override fun run() {
                 val staticsRequestTask = RequestTask(this@ActivityStaticDetail)
                 staticsRequestTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "http://${address}", "5000", "statics", staticsTag)
+
+                val databaseGetValuesTask = DatabaseGetValuesTask(this@ActivityStaticDetail)
+                databaseGetValuesTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, currentDate)
+
                 Log.d("Handler", "Ejecuto")
                 handler.postDelayed(this, delay.toLong())
             }
@@ -104,9 +175,13 @@ class ActivityStaticDetail : AppCompatActivity(), RequestTask.RequestTaskListene
     override fun afterRequest(rawData: String, tag: String) {
         if (tag == staticsTag)
         {
-            val jsonObject = JSONObject(rawData)
-            for (i in 0 until jsonObject.getJSONArray("elements").length()) {
-                val jsonData = jsonObject.getJSONArray("elements").getJSONObject(i)
+            val jsonObject = JSONObject(rawData).getJSONArray("elements")
+
+            val databaseValueTask = DatabaseValueTask(this)
+            databaseValueTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, jsonObject)
+
+            for (i in 0 until jsonObject.length()) {
+                val jsonData = jsonObject.getJSONObject(i)
                 if ( jsonData.getString("name") == model.name)
                 {
                     model.currentValue =  jsonData.getDouble("current_value").toFloat()
@@ -150,13 +225,78 @@ class ActivityStaticDetail : AppCompatActivity(), RequestTask.RequestTaskListene
         text = "${String.format("%.2f", model.maxValue/model.scalingFactor)} ${model.measurementUnit  }"
         maxValueTextView.text = text
 
-        val detailRecyclerView = findViewById<RecyclerView>(R.id.detailRecyclerView)
+        val detailRecyclerView = findViewById<RecyclerView>(R.id.detailRecyclerViewStaticDetail)
 
         val layoutManager = LinearLayoutManager(this)
         detailRecyclerView.layoutManager = layoutManager
 
         detailAdapter = DetailsRecycleViewAdapter(model.details)
         detailRecyclerView.adapter = detailAdapter
+    }
+
+    override fun afterDatabaseQuery(data: MutableList<Float>) {
+        val values = ArrayList<Entry>()
+        val lineDataSet: LineDataSet
+
+        for (i in 0 until data.size)
+            values.add(Entry(i.toFloat(), data[i]/model.scalingFactor, null))
+
+        if (chart.data != null && chart.data.dataSetCount > 0) {
+            lineDataSet = chart.data.getDataSetByIndex(0) as LineDataSet
+            lineDataSet.values = values
+            lineDataSet.notifyDataSetChanged()
+            chart.data.notifyDataChanged()
+            chart.notifyDataSetChanged()
+
+        }
+        else {
+            lineDataSet = LineDataSet(values, model.name)
+            lineDataSet.setDrawIcons(false)
+            lineDataSet.color = Color.WHITE
+            lineDataSet.valueTextColor = Color.WHITE
+
+            lineDataSet.lineWidth = 1f
+            lineDataSet.circleRadius = 3f
+
+            lineDataSet.setDrawCircleHole(false)
+            lineDataSet.setDrawCircles(false)
+            lineDataSet.setDrawValues(false)
+
+            // customize legend entry
+            lineDataSet.formLineWidth = 1f
+            lineDataSet.formLineDashEffect = DashPathEffect(floatArrayOf(10f, 5f), 0f)
+            lineDataSet.formSize = 15f
+
+            lineDataSet.valueTextSize = 9f
+
+            // set the filled area
+            lineDataSet.setDrawFilled(true)
+            lineDataSet.fillFormatter = IFillFormatter { _, _ -> chart.axisLeft.axisMinimum }
+
+            // set color of filled area
+            if (Utils.getSDKInt() >= 18) {
+                // drawables only supported on api level 18 and above
+                val drawable = ContextCompat.getDrawable(this, R.drawable.fade_purple)
+                lineDataSet.fillDrawable = drawable
+            } else {
+                lineDataSet.fillColor = R.color.colorPrimary
+            }
+
+            val dataSets = ArrayList<ILineDataSet>()
+            dataSets.add(lineDataSet) // add the data sets
+
+            chart.data = LineData(dataSets)
+
+        }
+        chart.invalidate()
+    }
+
+    override fun getModelName(): String {
+        return model.name
+    }
+
+    override fun getContext(): Context {
+        return this
     }
 
 }

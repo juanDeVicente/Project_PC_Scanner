@@ -1,18 +1,21 @@
 package com.projectpcscanner.database.dao
 
-import androidx.room.Dao
-import androidx.room.Query
-import java.util.*
+import androidx.room.*
+import com.projectpcscanner.database.entities.StaticsDataEntity
+import com.projectpcscanner.database.entities.StaticsValueEntity
 
 @Dao
 interface DAOStaticsData {
 
-    @Query("SELECT name, `current_ value`, date FROM statics_data JOIN statics_value ON statics_data_id=statics_value.statics_data_id")
-    fun getAllData(): List<StaticsValueCollection>
+    @Delete
+    fun delete(staticsValueEntity: StaticsValueEntity)
 
-    data class StaticsValueCollection(
-        val name: String,
-        val currentValue: Float,
-        val date: Date
-    )
+    @Query("DELETE FROM statics_data")
+    fun deleteAll()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAll(vararg staticsDataEntity: StaticsDataEntity)
+
+    @Query("SELECT * from statics_data WHERE name=:name")
+    fun getData(name: String): StaticsDataEntity
 }

@@ -17,7 +17,7 @@ import com.projectpcscanner.models.StaticsModel
 import com.vaibhavlakhera.circularprogressview.CircularProgressView
 import java.util.*
 
-class StatsRecycleViewAdapter(private val staticsModel: MutableList<StaticsModel>): RecyclerView.Adapter<StatsRecycleViewAdapter.MyViewHolder>(), Filterable {
+class StatsRecycleViewAdapter(private val staticsModel: MutableList<StaticsModel>, private val date: Date): RecyclerView.Adapter<StatsRecycleViewAdapter.MyViewHolder>(), Filterable {
 
     private var staticsModelFiltered = staticsModel
 
@@ -47,6 +47,7 @@ class StatsRecycleViewAdapter(private val staticsModel: MutableList<StaticsModel
             intent.putExtra("measurementUnit", model.measurementUnit)
             intent.putStringArrayListExtra("detailName", ArrayList(model.details.keys))
             intent.putStringArrayListExtra("detailValue", ArrayList(model.details.values))
+            intent.putExtra("date", date.time)
 
             it.context.startActivity(intent, options.toBundle())
         }
