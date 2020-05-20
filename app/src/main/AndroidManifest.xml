@@ -10,12 +10,12 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".activities.ActivityData"></activity>
+        <activity android:name=".activities.ActivityData" />
         <activity android:name=".activities.ActivityProperties" />
         <activity android:name=".activities.ActivityStaticDetail" />
         <activity android:name=".activities.ActivityHome" />
