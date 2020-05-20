@@ -1,0 +1,50 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+
+    <TextView
+        android:id="@+id/dialogNetworkIntroduceIPTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/introduce_ip"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/ipInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/helpButtonIntroduceIP"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:background="@null"
+        android:contentDescription="@string/help_icon"
+        app:layout_constraintBottom_toBottomOf="@+id/dialogNetworkIntroduceIPTextView"
+        app:layout_constraintStart_toEndOf="@+id/dialogNetworkIntroduceIPTextView"
+        app:layout_constraintTop_toTopOf="@+id/dialogNetworkIntroduceIPTextView"
+        app:srcCompat="@drawable/baseline_help_outline_24" />
+
+
+    <EditText
+        android:id="@+id/ipInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:autofillHints="ip"
+        android:digits="0123456789."
+        android:ems="10"
+        android:hint="@string/ipv4"
+        android:inputType="number"
+        android:textColorHint="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/dialogNetworkIntroduceIPTextView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

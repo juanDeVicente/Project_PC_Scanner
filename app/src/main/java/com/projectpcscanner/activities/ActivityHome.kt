@@ -1,6 +1,7 @@
 package com.projectpcscanner.activities
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
@@ -11,6 +12,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
@@ -42,7 +44,7 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
     private lateinit var adapter: StatsRecycleViewAdapter
 
     private val handler = Handler()
-    private val delay = 1000 //milliseconds
+    private val delay = 1200 //milliseconds
 
     private var firstRequest: Boolean = true
 
@@ -92,7 +94,7 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
         if (drawerLayout.isDrawerOpen(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START)
         else
-            exitApplication(this)
+            showExitDialog().show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -207,12 +209,31 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
                 openWebNavigator(this, "https://github.com/juanDeVicente/Project_PC_Scanner")
             }
             R.id.navigation_close -> {
-                exitApplication(this)
+                showExitDialog().show()
                 return true
             }
         }
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    private fun showExitDialog(): AlertDialog {
+        return this.let {
+            val builder = AlertDialog.Builder(it)
+            builder.apply {
+                setPositiveButton(R.string.exit) { _, _ ->
+                    exitApplication(this@ActivityHome)
+                }
+                setNegativeButton(R.string.close) { _, _ ->
+                    // User cancelled the dialog
+                }
+            }
+            // Set other dialog properties
+            builder.setMessage(R.string.exit_message)
+            builder.setTitle(R.string.exit)
+            // Create the AlertDialog
+            builder.create()
+        }
     }
 }

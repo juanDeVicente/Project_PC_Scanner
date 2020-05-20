@@ -6,11 +6,13 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ProgressBar
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -18,17 +20,21 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.projectpcscanner.R
 import com.projectpcscanner.fragments.dialogs.DialogFragmentNetworkError
+import com.projectpcscanner.fragments.dialogs.DialogIntroduceIP
 import com.projectpcscanner.tasks.BroadcastTask
+import com.projectpcscanner.tasks.HelloTask
+import com.projectpcscanner.tasks.RequestTask
 import com.projectpcscanner.utils.exitApplication
 import com.projectpcscanner.utils.setActivityFullScreen
 
 
-class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, DialogFragmentNetworkError.DialogFragmentNetworkErrorListener {
+class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, DialogFragmentNetworkError.DialogFragmentNetworkErrorListener, DialogIntroduceIP.Listener,  HelloTask.HelloTaskListener, RequestTask.RequestTaskListener{
     /**
      * Variable que controla si se puede ir hacia atrás en la actividad
      */
     private var back: Boolean = true
     private var internetPermissions: Int = 2000
+    private lateinit var ip: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,23 +95,24 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
     }
 
     override fun errorBroadcast() {
-        enableUI()
-
         val dialogFragmentNetworkError = DialogFragmentNetworkError()
         dialogFragmentNetworkError.show(supportFragmentManager, "networkError")
+
+        enableUI()
     }
 
     private fun startLink() {
-        disableUI()
-
         val broadcastTask = BroadcastTask(this)
         broadcastTask.execute()
+
+        disableUI()
     }
 
     private fun disableUI() {
         back = false
         val linkButton: Button = findViewById(R.id.linkButton)
         linkButton.isEnabled = false
+        linkButton.backgroundTintList = ContextCompat.getColorStateList(this, R.color.disableButton)
         val progressbar: ProgressBar = findViewById(R.id.linkProgressBar)
         progressbar.visibility = View.VISIBLE
     }
@@ -114,6 +121,7 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
         back = true
         val linkButton: Button = findViewById(R.id.linkButton)
         linkButton.isEnabled = true
+        linkButton.backgroundTintList = ContextCompat.getColorStateList(this, R.color.colorPrimary)
         val progressbar: ProgressBar = findViewById(R.id.linkProgressBar)
         progressbar.visibility = View.INVISIBLE
     }
@@ -122,11 +130,40 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
         startLink()
     }
 
+    override fun onNeutralButton() {
+        val introduceIP = DialogIntroduceIP(this)
+        introduceIP.show(supportFragmentManager, "introduceIP")
+    }
+
     override fun onNegativeButton() {
         exitApplication(this)
     }
 
     override fun getActivity(): Activity {
         return this
+    }
+
+    override fun retryConnection(ip: String) {
+        disableUI()
+        val helloTask = HelloTask(this)
+        helloTask.execute(ip)
+        val requestTask = RequestTask(this)
+        this.ip = ip
+        requestTask.execute("http://${ip}", "5000", "")
+    }
+
+    override fun afterRequest(rawData: String, tag: String) {
+        afterBroadcast(ip)
+    }
+
+    override fun requestError() {
+        errorBroadcast()
+    }
+    override fun afterHello() {
+        afterBroadcast(ip)
+    }
+
+    override fun helloError() {
+        errorBroadcast()
     }
 }

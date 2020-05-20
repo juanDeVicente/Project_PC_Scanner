@@ -50,9 +50,12 @@ class HelloTask(private val listener: HelloTaskListener): AsyncTask<String, Void
         super.onPostExecute(result)
         if (result == true)
             listener.afterHello()
+        else
+            listener.helloError()
     }
 
     interface HelloTaskListener{
         fun afterHello()
+        fun helloError() {}
     }
 }

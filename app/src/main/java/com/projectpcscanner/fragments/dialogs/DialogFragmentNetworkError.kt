@@ -40,7 +40,10 @@ class DialogFragmentNetworkError : DialogFragment() {
                 .setPositiveButton(getString(R.string.retry)) { _, _ ->
                     listener.onPositiveButton()
                 }
-                .setNegativeButton(getString(R.string.close)) { _, _ ->
+                .setNeutralButton(R.string.introduce_ip) {_, _ ->
+                    listener.onNeutralButton()
+                }
+                .setNegativeButton(getString(R.string.exit)) { _, _ ->
                     listener.onNegativeButton()
                 }
             builder.create()
@@ -49,6 +52,7 @@ class DialogFragmentNetworkError : DialogFragment() {
 
     interface DialogFragmentNetworkErrorListener {
         fun onPositiveButton()
+        fun onNeutralButton()
         fun onNegativeButton()
         fun getActivity(): Activity
     }

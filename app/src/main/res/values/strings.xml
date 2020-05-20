@@ -22,7 +22,7 @@
     <string name="solid_state">SSD</string>
     <string name="hard_state">HDD </string>
     <string name="retry">Reintentar</string>
-    <string name="close">Salir</string>
+    <string name="close">Cerrar</string>
     <string name="nd_properties">Propiedades</string>
     <string name="nd_data">Datos</string>
     <string name="nd_info">Acerca de</string>
@@ -35,4 +35,10 @@
     <string name="pc_name">Nombre del PC</string>
     <string name="ipv4">IPV4</string>
     <string name="ipv6">IPV6</string>
+    <string name="introduce_ip">Introducir IP</string>
+    <string name="exit">Salir</string>
+    <string name="exit_message">¿Estás seguro de querer cerrar la app?</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

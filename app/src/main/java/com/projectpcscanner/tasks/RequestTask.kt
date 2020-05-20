@@ -27,7 +27,7 @@ class RequestTask(private val listener: RequestTaskListener) : AsyncTask<String,
         val url = URL("${params[0]}:${params[1]}/${params[2]}")
         val response: String
         val urlConnection: HttpURLConnection = url.openConnection() as HttpURLConnection
-        urlConnection.connectTimeout = 2000
+        urlConnection.connectTimeout = 1000
         try {
             response = String(urlConnection.inputStream.readBytes())
         }
@@ -49,9 +49,12 @@ class RequestTask(private val listener: RequestTaskListener) : AsyncTask<String,
         super.onPostExecute(result)
         if (result != null)
             listener.afterRequest(result, this.tag)
+        else
+            listener.requestError()
     }
 
     interface RequestTaskListener{
         fun afterRequest(rawData: String, tag: String)
+        fun requestError() {}
     }
 }
