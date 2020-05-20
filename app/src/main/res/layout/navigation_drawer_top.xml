@@ -16,7 +16,7 @@
         android:scaleY="2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/logo_foreground" />
+        app:srcCompat="@drawable/logo_foreground" />
 
     <TextView
         android:id="@+id/ndAppName"
