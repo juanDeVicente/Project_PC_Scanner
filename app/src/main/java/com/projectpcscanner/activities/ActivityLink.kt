@@ -157,7 +157,7 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
     }
 
     override fun requestError() {
-        errorBroadcast()
+        enableUI()
     }
     override fun afterHello() {
         afterBroadcast(ip)

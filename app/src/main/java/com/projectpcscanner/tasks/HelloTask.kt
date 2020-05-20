@@ -29,6 +29,7 @@ class HelloTask(private val listener: HelloTaskListener): AsyncTask<String, Void
         }
         catch (e: SocketTimeoutException)
         {
+            socket.close()
             return false
         }
         socket.close()

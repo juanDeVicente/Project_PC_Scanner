@@ -7,6 +7,7 @@ import java.io.InputStream
 import java.lang.Exception
 import java.lang.RuntimeException
 import java.lang.StringBuilder
+import java.net.ConnectException
 import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.net.URL
@@ -25,19 +26,27 @@ class RequestTask(private val listener: RequestTaskListener) : AsyncTask<String,
         } as String
 
         val url = URL("${params[0]}:${params[1]}/${params[2]}")
-        val response: String
+        var response: String?
         val urlConnection: HttpURLConnection = url.openConnection() as HttpURLConnection
         urlConnection.connectTimeout = 1000
         try {
             response = String(urlConnection.inputStream.readBytes())
         }
+        catch (e: ConnectException)
+        {
+            response = null
+        }
         catch (e: SocketTimeoutException)
         {
-            return null
+            response = null
         }
         catch (e: RuntimeException)
         {
-            return null
+            response = null
+        }
+        catch (e: Exception)
+        {
+            response = null
         }
         finally {
             urlConnection.disconnect()
