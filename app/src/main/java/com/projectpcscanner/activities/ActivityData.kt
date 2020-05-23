@@ -177,7 +177,7 @@ class ActivityData : AppCompatActivity(), DatabaseGetAllValuesTask.Listener, Dat
             xAxis.position = XAxis.XAxisPosition.BOTTOM
             xAxis.granularity = 51f
             xAxis.valueFormatter = object : ValueFormatter() {
-                private val mFormat = SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH)
+                private val mFormat = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
                 override fun getFormattedValue(value: Float): String {
                     val millis = data[data.keys.toList()[currentIndex]]!![value.toInt()].date!!.time
                     return mFormat.format(Date(millis))

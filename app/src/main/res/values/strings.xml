@@ -38,6 +38,10 @@
     <string name="introduce_ip">Introducir IP</string>
     <string name="exit">Salir</string>
     <string name="exit_message">¿Estás seguro de querer cerrar la app?</string>
+    <string name="delete_database">Borrar los datos</string>
+    <string name="delete_database_message">¿Estás seguro de querer borrar la base de datos? Esta opción no tiene vuelta atrás</string>
+    <string name="reset_application">Resetear la aplicación</string>
+    <string name="reset_application_message">¿Estás seguro de querer resetear la aplicación? Esta opción no tiene vuelta atrás</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

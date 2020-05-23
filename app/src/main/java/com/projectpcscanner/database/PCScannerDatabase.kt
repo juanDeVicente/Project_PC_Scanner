@@ -37,7 +37,7 @@ abstract class PCScannerDatabase: RoomDatabase() {
         }
     }
 
-    fun clearDatabase(context: Context) {
+    fun clearDatabase() {
         if (instance != null)
         {
             staticsDataDao().deleteAll()

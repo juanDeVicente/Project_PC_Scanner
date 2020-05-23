@@ -1,13 +1,13 @@
 package com.projectpcscanner.activities
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
+import android.preference.PreferenceManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -26,6 +26,7 @@ import com.projectpcscanner.R
 import com.projectpcscanner.models.StaticsModel
 import com.projectpcscanner.recycleviewadapters.StatsRecycleViewAdapter
 import com.projectpcscanner.tasks.DatabaseDataTask
+import com.projectpcscanner.tasks.DatabaseDeleteTask
 import com.projectpcscanner.tasks.DatabaseValueTask
 import com.projectpcscanner.tasks.RequestTask
 import com.projectpcscanner.utils.exitApplication
@@ -35,7 +36,7 @@ import org.json.JSONObject
 import java.util.*
 
 
-class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, NavigationView.OnNavigationItemSelectedListener {
+class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, NavigationView.OnNavigationItemSelectedListener, DatabaseDeleteTask.Listener {
     private var staticsTag = "statics"
 
     private lateinit var map: MutableMap<String, StaticsModel>
@@ -47,6 +48,7 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
     private val delay = 1200 //milliseconds
 
     private var firstRequest: Boolean = true
+    private var deleteDatabase = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,18 +133,83 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
         return super.onCreateOptionsMenu(menu)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.delete_database -> {
+                val builder = AlertDialog.Builder(this)
+                builder.apply {
+                    setPositiveButton(R.string.delete_database) { _, _ ->
+                        this@ActivityHome.startDeleteDatabaseTask()
+                    }
+                    setNegativeButton(R.string.close) { _, _ ->
+
+                    }
+                }
+
+                builder.setMessage(R.string.delete_database_message)
+                builder.setTitle(R.string.delete_database)
+
+                builder.create()
+                builder.show()
+            }
+            R.id.reset_application -> {
+                val builder = AlertDialog.Builder(this)
+                builder.apply {
+                    setPositiveButton(R.string.reset_application) { _, _ ->
+                        this@ActivityHome.startDeleteDatabaseTask()
+                        val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+                        with(sharedPreferences.edit()) {
+                            remove("address")
+                            apply()
+                        }
+                        val intent = Intent(this@ActivityHome, ActivityWelcome::class.java)
+                        startActivity(intent)
+                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+                    }
+                    setNegativeButton(R.string.close) { _, _ ->
+
+                    }
+                }
+
+                builder.setMessage(R.string.reset_application_message)
+                builder.setTitle(R.string.reset_application)
+
+                builder.create()
+                builder.show()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun startDeleteDatabaseTask() {
+        deleteDatabase = true
+        val task = DatabaseDeleteTask(this)
+        task.execute()
+    }
+
+    override fun afterDeleteDatabase() {
+        deleteDatabase = false
+        firstRequest = true
+    }
+
+    override fun getContext(): Context {
+        return this
+    }
+
     override fun afterRequest(rawData: String, tag: String) {
         if (tag == staticsTag) {
             val jsonObject = JSONObject(rawData).getJSONArray("elements")
 
-            if (firstRequest){
-                firstRequest = false
-                val databaseDataTask = DatabaseDataTask(this)
-                databaseDataTask.execute(jsonObject)
-            }
+            if (!deleteDatabase) {
+                if (firstRequest) {
+                    firstRequest = false
+                    val databaseDataTask = DatabaseDataTask(this)
+                    databaseDataTask.execute(jsonObject)
+                }
 
-            val databaseValueTask = DatabaseValueTask(this)
-            databaseValueTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, jsonObject)
+                val databaseValueTask = DatabaseValueTask(this)
+                databaseValueTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, jsonObject)
+            }
 
             for (i in 0 until jsonObject.length()) {
                 val model = StaticsModel(jsonObject.getJSONObject(i))

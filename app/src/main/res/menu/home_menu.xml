@@ -8,10 +8,12 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         android:tint="@color/colorText"
         />
-    <item android:id="@+id/more_options"
-        android:title="@string/more_options"
-        android:icon="@drawable/baseline_more_vert_24"
-        app:showAsAction="ifRoom"
-        android:tint="@color/colorText"
-        />
+    <item
+        android:id="@+id/delete_database"
+        android:title="@string/delete_database" />
+    <item
+        android:id="@+id/reset_application"
+        android:title="@string/reset_application" />
+
+
 </menu>
