@@ -160,6 +160,7 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
                         val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
                         with(sharedPreferences.edit()) {
                             remove("address")
+                            remove("port")
                             apply()
                         }
                         val intent = Intent(this@ActivityHome, ActivityWelcome::class.java)

@@ -3,24 +3,26 @@ package com.projectpcscanner.tasks
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.os.AsyncTask
+import android.os.Build
 import android.util.Log
 import java.io.IOException
-import java.lang.Exception
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
 import java.net.SocketTimeoutException
 
-class BroadcastTask(private val listener: BroadcastTaskListener): AsyncTask<Void, Void, String>() {
+
+class BroadcastTask(private val listener: BroadcastTaskListener): AsyncTask<Void, Void, List<String>>() {
     private lateinit var socket: DatagramSocket
-    override fun doInBackground(vararg params: Void?): String? {
+    override fun doInBackground(vararg params: Void?): List<String>? {
         var i = 0
         var packet: DatagramPacket? = null
         while (i < 5) { // Kotlin no permite usar una variable externa para iterar sobre un bucle for...
             socket = DatagramSocket(5001)
-            socket.broadcast = true
+
+            val message = listOf<String>(getDeviceName()!!, Build.VERSION.RELEASE, Build.VERSION.SDK_INT.toString()).joinToString()
             packet = DatagramPacket(
-                "".toByteArray(), 0,
+                message.toByteArray(), message.length,
                 getBroadcastAddress(), 5000
             )
             socket.send(packet)
@@ -38,7 +40,7 @@ class BroadcastTask(private val listener: BroadcastTaskListener): AsyncTask<Void
         }
         if (i < 5 && packet != null) {
             socket.close()
-            return packet.address.hostAddress
+            return listOf(String(packet.data, 0, packet.length), packet.address.hostAddress)
         }
         return null
     }
@@ -52,10 +54,11 @@ class BroadcastTask(private val listener: BroadcastTaskListener): AsyncTask<Void
         return InetAddress.getByAddress(quads)
     }
 
-    override fun onPostExecute(result: String?) {
+    override fun onPostExecute(result: List<String>?) {
         super.onPostExecute(result)
+        Log.d("broadcast", result.toString())
         if (result != null)
-            listener.afterBroadcast(result)
+            listener.afterBroadcast(result[1], result[0])
         else
             listener.errorBroadcast()
     }
@@ -70,9 +73,30 @@ class BroadcastTask(private val listener: BroadcastTaskListener): AsyncTask<Void
 
         }
     }
+    private fun getDeviceName(): String? {
+        val manufacturer = Build.MANUFACTURER
+        val model = Build.MODEL
+        return if (model.startsWith(manufacturer)) {
+            capitalize(model)
+        } else {
+            capitalize(manufacturer) + " " + model
+        }
+    }
 
+
+    private fun capitalize(s: String?): String {
+        if (s == null || s.length == 0) {
+            return ""
+        }
+        val first = s[0]
+        return if (Character.isUpperCase(first)) {
+            s
+        } else {
+            Character.toUpperCase(first).toString() + s.substring(1)
+        }
+    }
     interface BroadcastTaskListener{
-        fun afterBroadcast(address: String)
+        fun afterBroadcast(address: String, port: String)
         fun errorBroadcast()
         fun getApplicationContext(): Context
     }

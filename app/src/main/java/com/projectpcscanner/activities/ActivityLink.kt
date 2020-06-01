@@ -79,11 +79,12 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
         }
     }
 
-    override fun afterBroadcast(address: String) {
+    override fun afterBroadcast(address: String, port: String) {
         Log.d("IP", address)
         val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)?: return
         with(sharedPreferences.edit()) {
             putString("address", address)
+            putString("port", port)
             apply()
         }
         val intent = Intent(this, ActivityHome::class.java)
@@ -153,14 +154,14 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
     }
 
     override fun afterRequest(rawData: String, tag: String) {
-        afterBroadcast(ip)
+        afterBroadcast(ip, "5000")
     }
 
     override fun requestError() {
         enableUI()
     }
     override fun afterHello() {
-        afterBroadcast(ip)
+        afterBroadcast(ip, "5000")
     }
 
     override fun helloError() {
