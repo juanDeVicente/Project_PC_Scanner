@@ -26,7 +26,7 @@ class DialogIntroduceIP(private val listener: Listener) : DialogFragment(){
     private lateinit var dialog: AlertDialog
 
     interface Listener {
-        fun retryConnection(ip: String)
+        fun retryConnection(ip: String, port: String)
         fun onNegativeButton()
         fun getActivity(): Activity
     }
@@ -46,7 +46,7 @@ class DialogIntroduceIP(private val listener: Listener) : DialogFragment(){
 
             builder.setView(v)
                 .setPositiveButton(getString(R.string.retry)) { _, _ ->
-                    listener.retryConnection(v.findViewById<EditText>(R.id.ipInput).text.toString())
+                    listener.retryConnection(v.findViewById<EditText>(R.id.ipInput).text.toString(), v.findViewById<EditText>(R.id.portInput).text.toString())
                 }
                 .setNegativeButton(getString(R.string.exit)) { _, _ ->
                     listener.onNegativeButton()

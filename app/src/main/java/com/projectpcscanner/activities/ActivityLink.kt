@@ -28,13 +28,14 @@ import com.projectpcscanner.utils.exitApplication
 import com.projectpcscanner.utils.setActivityFullScreen
 
 
-class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, DialogFragmentNetworkError.DialogFragmentNetworkErrorListener, DialogIntroduceIP.Listener,  HelloTask.HelloTaskListener, RequestTask.RequestTaskListener{
+class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, DialogFragmentNetworkError.DialogFragmentNetworkErrorListener, DialogIntroduceIP.Listener, RequestTask.RequestTaskListener{
     /**
      * Variable que controla si se puede ir hacia atrás en la actividad
      */
     private var back: Boolean = true
     private var internetPermissions: Int = 2000
     private lateinit var ip: String
+    private lateinit var port: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -144,27 +145,21 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
         return this
     }
 
-    override fun retryConnection(ip: String) {
+    override fun retryConnection(ip: String, port: String) {
         disableUI()
-        val helloTask = HelloTask(this)
-        helloTask.execute(ip)
         val requestTask = RequestTask(this)
         this.ip = ip
-        requestTask.execute("http://${ip}", "5000", "")
+        this.port = port
+        requestTask.execute("http://${ip}", port, "")
     }
 
     override fun afterRequest(rawData: String, tag: String) {
-        afterBroadcast(ip, "5000")
+        Log.d("@@@@", "hola")
+        afterBroadcast(ip, port)
     }
 
     override fun requestError() {
+        Log.d("@@@@", "adios")
         enableUI()
-    }
-    override fun afterHello() {
-        afterBroadcast(ip, "5000")
-    }
-
-    override fun helloError() {
-        errorBroadcast()
     }
 }

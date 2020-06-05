@@ -239,10 +239,11 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
         Log.d("requestStatics", "He sido llamado")
         val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)?: return
         val address = sharedPreferences.getString("address", null)
+        val port = sharedPreferences.getString("port", "5000")
         handler.postDelayed(object : Runnable {
             override fun run() {
                 val staticsRequestTask = RequestTask(this@ActivityHome)
-                staticsRequestTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "http://${address}", "5000", "statics", staticsTag)
+                staticsRequestTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "http://${address}", port, "statics", staticsTag)
                 handler.postDelayed(this, delay.toLong())
             }
         }, 0) //0 por que al principio quiero que se mande una petición para obtener los datos

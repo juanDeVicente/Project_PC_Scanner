@@ -158,10 +158,11 @@ class ActivityStaticDetail : AppCompatActivity(), RequestTask.RequestTaskListene
         Log.d("requestStatics", "He sido llamado")
         val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)?: return
         val address = sharedPreferences.getString("address", null)
+        val port = sharedPreferences.getString("port", "5000")
         handler.postDelayed(object : Runnable {
             override fun run() {
                 val staticsRequestTask = RequestTask(this@ActivityStaticDetail)
-                staticsRequestTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "http://${address}", "5000", "statics", staticsTag)
+                staticsRequestTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "http://${address}", port, "statics", staticsTag)
 
                 val databaseGetValuesTask = DatabaseGetValuesTask(this@ActivityStaticDetail)
                 databaseGetValuesTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, currentDate)

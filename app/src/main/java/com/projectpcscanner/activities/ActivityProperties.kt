@@ -35,9 +35,10 @@ class ActivityProperties : AppCompatActivity(), RequestTask.RequestTaskListener 
 
         val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)?: return
         val address = sharedPreferences.getString("address", null)
+        val port = sharedPreferences.getString("port", "5000")
 
         val staticsRequestTask = RequestTask(this)
-        staticsRequestTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "http://${address}", "5000", "properties", "")
+        staticsRequestTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "http://${address}", port, "properties", "")
     }
 
     override fun afterRequest(rawData: String, tag: String) {

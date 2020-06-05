@@ -4,13 +4,14 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import kotlin.system.exitProcess
 
 fun setActivityFullScreen(activity: Activity) {
-    activity.requestWindowFeature(Window.FEATURE_NO_TITLE)
-    activity.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    if(activity.requestWindowFeature(Window.FEATURE_NO_TITLE))
+        activity.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
 }
 
 fun exitApplication(activity: Activity) {
