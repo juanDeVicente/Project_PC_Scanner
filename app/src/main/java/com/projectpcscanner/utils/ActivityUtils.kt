@@ -4,14 +4,20 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.view.View
 import android.view.Window
+import android.view.WindowInsets
 import android.view.WindowManager
+import androidx.core.content.ContextCompat
+import com.projectpcscanner.R
 import kotlin.system.exitProcess
-
+//FIXME En algunos dispositivos, el fullscreen hace que las animaciones se vean raras
 fun setActivityFullScreen(activity: Activity) {
-    if(activity.requestWindowFeature(Window.FEATURE_NO_TITLE))
-        activity.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    activity.window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+
+    activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+    activity.window. statusBarColor = ContextCompat.getColor(activity, R.color.dark)
 }
 
 fun exitApplication(activity: Activity) {
