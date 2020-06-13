@@ -15,7 +15,7 @@ class DatabaseValueTask(private val context: Context): AsyncTask<JSONArray, Void
 
         for (i in 0 until jsonObject.length()) {
             val jsonData = jsonObject.getJSONObject(i)
-            data.add(StaticsValueEntity(0, jsonData.getString("name"), jsonData.getDouble("current_value").toFloat(), Date()))
+            data.add(StaticsValueEntity(0, jsonData.getString("Name"), jsonData.getDouble("CurrentValue").toFloat(), Date()))
         }
 
         pcScannerDatabase.staticsValueDao().insertAll(data)

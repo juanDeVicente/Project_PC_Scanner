@@ -3,7 +3,9 @@ package com.projectpcscanner.tasks
 import android.os.AsyncTask
 import android.util.Log
 import java.io.BufferedInputStream
+import java.io.BufferedReader
 import java.io.InputStream
+import java.io.InputStreamReader
 import java.lang.Exception
 import java.lang.RuntimeException
 import java.lang.StringBuilder
@@ -28,24 +30,28 @@ class RequestTask(private val listener: RequestTaskListener) : AsyncTask<String,
         val url = URL("${params[0]}:${params[1]}/${params[2]}")
         var response: String?
         val urlConnection: HttpURLConnection = url.openConnection() as HttpURLConnection
-        urlConnection.connectTimeout = 1000
+        urlConnection.connectTimeout = 5000
         try {
             response = String(urlConnection.inputStream.readBytes())
         }
         catch (e: ConnectException)
         {
+            Log.e("ServerException", e.toString())
             response = null
         }
         catch (e: SocketTimeoutException)
         {
+            Log.e("ServerException", e.toString())
             response = null
         }
         catch (e: RuntimeException)
         {
+            Log.e("ServerException", e.toString())
             response = null
         }
         catch (e: Exception)
         {
+            Log.e("ServerException", e.toString())
             response = null
         }
         finally {

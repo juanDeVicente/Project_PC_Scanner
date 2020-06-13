@@ -31,7 +31,6 @@ class StatsRecycleViewAdapter(private val staticsModel: MutableList<StaticsModel
     override fun getItemCount(): Int {
         return staticsModelFiltered.size
     }
-
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val model = staticsModel[staticsModel.indexOf(staticsModelFiltered[position])]
         holder.view.setOnClickListener{
@@ -84,4 +83,5 @@ class StatsRecycleViewAdapter(private val staticsModel: MutableList<StaticsModel
 
         }
     }
+
 }

@@ -14,7 +14,7 @@ class DatabaseDataTask(private val context: Context): AsyncTask<JSONArray, Void,
 
         for (i in 0 until jsonObject.length()) {
             val jsonData = jsonObject.getJSONObject(i)
-            pcScannerDatabase.staticsDataDao().insertAll(StaticsDataEntity(jsonData.getString("name"), jsonData.getDouble("max_value").toFloat(), jsonData.getDouble("min_value").toFloat(), jsonData.getDouble("scaling_factor").toFloat()))
+            pcScannerDatabase.staticsDataDao().insertAll(StaticsDataEntity(jsonData.getString("Name"), jsonData.getDouble("MaxValue").toFloat(), jsonData.getDouble("MinValue").toFloat(), jsonData.getDouble("ScalingFactor").toFloat()))
         }
         return null
     }

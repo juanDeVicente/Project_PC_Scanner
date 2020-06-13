@@ -31,6 +31,7 @@ import com.projectpcscanner.tasks.RequestTask
 import com.projectpcscanner.utils.exitApplication
 import com.projectpcscanner.utils.openWebNavigator
 import com.projectpcscanner.utils.setActivityFullScreen
+import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
 
@@ -198,7 +199,7 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
 
     override fun afterRequest(rawData: String, tag: String) {
         if (tag == staticsTag) {
-            val jsonObject = JSONObject(rawData).getJSONArray("elements")
+            val jsonObject = JSONArray(rawData)
 
             if (!deleteDatabase) {
                 if (firstRequest) {
@@ -213,7 +214,10 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
 
             for (i in 0 until jsonObject.length()) {
                 val model = StaticsModel(jsonObject.getJSONObject(i))
-                map[model.name] = model
+                if (map.containsKey(model.name))
+                    map[model.name]!!.currentValue = model.currentValue
+                else
+                    map[model.name] = model
             }
             for (j in map.values.indices)
                 if (j < data.size)
@@ -235,7 +239,6 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
         startRequestStatics()
     }
     private fun startRequestStatics() {
-        Log.d("requestStatics", "He sido llamado")
         val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)?: return
         val address = sharedPreferences.getString("address", null)
         val port = sharedPreferences.getString("port", "5000")

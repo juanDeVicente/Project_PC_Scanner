@@ -15,6 +15,7 @@ import com.projectpcscanner.models.PropertiesModel
 import com.projectpcscanner.recycleviewadapters.PropertiesRecycleViewAdapter
 import com.projectpcscanner.tasks.RequestTask
 import com.projectpcscanner.utils.setActivityFullScreen
+import org.json.JSONArray
 import org.json.JSONObject
 
 class ActivityProperties : AppCompatActivity(), RequestTask.RequestTaskListener {
@@ -42,10 +43,10 @@ class ActivityProperties : AppCompatActivity(), RequestTask.RequestTaskListener 
     }
 
     override fun afterRequest(rawData: String, tag: String) {
-        val jsonObject = JSONObject(rawData).getJSONArray("elements")
+        val jsonObject = JSONArray(rawData)
         val properties = mutableListOf<PropertiesModel>()
         for (i in 0 until jsonObject.length())
-            properties.add(PropertiesModel(jsonObject.getJSONObject(i).getString("name"), jsonObject.getJSONObject(i).getString("value")))
+            properties.add(PropertiesModel(jsonObject.getJSONObject(i).getString("Name"), jsonObject.getJSONObject(i).getString("Value")))
 
         val layoutManager = LinearLayoutManager(this)
         findViewById<RecyclerView>(R.id.propertiesRecyclerView).layoutManager = layoutManager

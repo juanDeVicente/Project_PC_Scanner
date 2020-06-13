@@ -36,6 +36,7 @@ import com.projectpcscanner.tasks.RequestTask
 import com.projectpcscanner.utils.setActivityFullScreen
 import com.projectpcscanner.utils.toMap
 import com.vaibhavlakhera.circularprogressview.CircularProgressView
+import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
 import kotlin.collections.ArrayList
@@ -176,17 +177,17 @@ class ActivityStaticDetail : AppCompatActivity(), RequestTask.RequestTaskListene
     override fun afterRequest(rawData: String, tag: String) {
         if (tag == staticsTag)
         {
-            val jsonObject = JSONObject(rawData).getJSONArray("elements")
+            val jsonObject = JSONArray(rawData)
 
             val databaseValueTask = DatabaseValueTask(this)
             databaseValueTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, jsonObject)
 
             for (i in 0 until jsonObject.length()) {
                 val jsonData = jsonObject.getJSONObject(i)
-                if ( jsonData.getString("name") == model.name)
+                if ( jsonData.getString("Name") == model.name)
                 {
-                    model.currentValue =  jsonData.getDouble("current_value").toFloat()
-                    model.details = toMap(jsonData.getJSONObject("details")) as Map<String, String>
+                    model.currentValue =  jsonData.getDouble("CurrentValue").toFloat()
+                    model.details = toMap(jsonData.getJSONObject("Details")) as Map<String, String>
                     setUpView(true)
                     break
                 }
