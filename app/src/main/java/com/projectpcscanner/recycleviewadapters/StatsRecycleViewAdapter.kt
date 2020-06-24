@@ -21,7 +21,10 @@ class StatsRecycleViewAdapter(private val staticsModel: MutableList<StaticsModel
 
     private var staticsModelFiltered = staticsModel
 
-    inner class MyViewHolder(val view: View) : RecyclerView.ViewHolder(view)
+    inner class MyViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        var staticNameTextView: TextView = view.findViewById(R.id.staticNameTextView)
+        var progressView: CircularProgressView = view.findViewById(R.id.progressView)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.stats_recycler_view_item, parent, false)
@@ -32,10 +35,9 @@ class StatsRecycleViewAdapter(private val staticsModel: MutableList<StaticsModel
         return staticsModelFiltered.size
     }
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val model = staticsModel[staticsModel.indexOf(staticsModelFiltered[position])]
+        val model = staticsModelFiltered[holder.adapterPosition]
         holder.view.setOnClickListener{
-            val progressView = it.findViewById<View>(R.id.progressView)
-            val options = ActivityOptions.makeSceneTransitionAnimation(it.context as Activity, progressView, "detail_transition_item")
+            val options = ActivityOptions.makeSceneTransitionAnimation(it.context as Activity, it.findViewById(R.id.progressView), "detail_transition_item")
 
             val intent = Intent(it.context, ActivityStaticDetail::class.java)
             Log.d("send_values", "${model.name} ${model.maxValue}, ${model.currentValue}")
@@ -50,13 +52,8 @@ class StatsRecycleViewAdapter(private val staticsModel: MutableList<StaticsModel
 
             it.context.startActivity(intent, options.toBundle())
         }
-        val staticNameTextView = holder.view.findViewById<TextView>(R.id.staticNameTextView)
-        val progressView = holder.view.findViewById<CircularProgressView>(R.id.progressView)
-
-        staticNameTextView.text = model.name
-
-        progressView.setTotal(100)
-        progressView.setProgress(((100 * model.currentValue)/model.maxValue).toInt(), true)
+        holder.staticNameTextView.text = model.name
+        holder.progressView.setProgress(((100 * model.currentValue)/model.maxValue).toInt(), true)
     }
 
     override fun getFilter(): Filter {
@@ -82,6 +79,14 @@ class StatsRecycleViewAdapter(private val staticsModel: MutableList<StaticsModel
             }
 
         }
+    }
+    //https://stackoverflow.com/questions/38182223/recyclerview-wrong-position-set-onbindviewholder
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
     }
 
 }

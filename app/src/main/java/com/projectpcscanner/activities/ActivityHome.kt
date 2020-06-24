@@ -10,6 +10,10 @@ import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -20,14 +24,13 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Visibility
 import com.google.android.material.navigation.NavigationView
 import com.projectpcscanner.R
 import com.projectpcscanner.models.StaticsModel
 import com.projectpcscanner.recycleviewadapters.StatsRecycleViewAdapter
-import com.projectpcscanner.tasks.DatabaseDataTask
-import com.projectpcscanner.tasks.DatabaseDeleteTask
-import com.projectpcscanner.tasks.DatabaseValueTask
-import com.projectpcscanner.tasks.RequestTask
+import com.projectpcscanner.tasks.*
+import com.projectpcscanner.utils.createNotification
 import com.projectpcscanner.utils.exitApplication
 import com.projectpcscanner.utils.openWebNavigator
 import com.projectpcscanner.utils.setActivityFullScreen
@@ -36,10 +39,12 @@ import org.json.JSONObject
 import java.util.*
 
 
-class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, NavigationView.OnNavigationItemSelectedListener, DatabaseDeleteTask.Listener {
+class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, NavigationView.OnNavigationItemSelectedListener, DatabaseDeleteTask.Listener,
+    BroadcastTask.BroadcastTaskListener {
     private var staticsTag = "statics"
 
-    private lateinit var map: MutableMap<String, StaticsModel>
+    private val map: MutableMap<String, StaticsModel> = mutableMapOf()
+    private var visitedMap: MutableMap<String, Boolean> = mutableMapOf()
     private var data: MutableList<StaticsModel> = mutableListOf()
 
     private lateinit var adapter: StatsRecycleViewAdapter
@@ -49,6 +54,9 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
 
     private var firstRequest: Boolean = true
     private var deleteDatabase = false
+    private var errorRequest = false
+
+    private var allowNotification = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +82,6 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
         val navigationView = findViewById<NavigationView>(R.id.navigation_drawer_view)
         navigationView.setNavigationItemSelectedListener(this)
 
-        map = mutableMapOf()
         val recyclerView = findViewById<RecyclerView>(R.id.staticsRecyclerView)
 
         val layoutManager = if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
@@ -88,6 +95,12 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
         val currentDate = Date()
         adapter = StatsRecycleViewAdapter(data, currentDate)
         recyclerView.adapter = adapter
+
+        findViewById<Button>(R.id.buttonReconnect).setOnClickListener {
+            findViewById<Button>(R.id.buttonReconnect).isEnabled = false
+            findViewById<ProgressBar>(R.id.progressBarReconnect).visibility = View.VISIBLE
+            BroadcastTask(this).execute()
+        }
     }
 
     override fun onBackPressed() {
@@ -106,13 +119,13 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                 val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-                return true;
+                return true
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
                 val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-                return true;
+                return true
             }
 
         })
@@ -199,6 +212,16 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
 
     override fun afterRequest(rawData: String, tag: String) {
         if (tag == staticsTag) {
+            if (errorRequest)
+            {
+                errorRequest = false
+                findViewById<Toolbar>(R.id.toolbar).visibility = View.VISIBLE
+                findViewById<RecyclerView>(R.id.staticsRecyclerView).visibility = View.VISIBLE
+                findViewById<TextView>(R.id.textViewReconnect).visibility = View.GONE
+                findViewById<ProgressBar>(R.id.progressBarReconnect).visibility = View.GONE
+                findViewById<Button>(R.id.buttonReconnect).isEnabled = true
+                findViewById<Button>(R.id.buttonReconnect).visibility = View.GONE
+            }
             val jsonObject = JSONArray(rawData)
 
             if (!deleteDatabase) {
@@ -214,18 +237,48 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
 
             for (i in 0 until jsonObject.length()) {
                 val model = StaticsModel(jsonObject.getJSONObject(i))
-                if (map.containsKey(model.name))
+                if (map.containsKey(model.name)) {
                     map[model.name]!!.currentValue = model.currentValue
-                else
+                    for (j in 0 until data.size) {
+                        if (data[j].name == model.name) {
+                            data[j] = model
+                        }
+                    }
+                }
+                else {
+                    if (allowNotification)
+                        createNotification(this, getString(R.string.device_connected_title), getString(R.string.device_connected, model.name))
                     map[model.name] = model
+                    data.add(model)
+                }
+                visitedMap[model.name] = true
             }
-            for (j in map.values.indices)
-                if (j < data.size)
-                    data[j] = map.values.toList()[j]
-                else
-                    data.add(map.values.toList()[j])
+            for(i in visitedMap) {
+                if (!i.value) {
+                    createNotification(this, getString(R.string.device_disconnected_title), getString(R.string.device_disconnected, i.key))
+                    data.remove(map.remove(i.key))
+                }
+            }
+            visitedMap = visitedMap.filterValues {
+                it
+            }.toMutableMap()
+            for (k in visitedMap.keys)
+                visitedMap[k] = false
 
             adapter.notifyDataSetChanged()
+            allowNotification = true
+        }
+    }
+
+    override fun requestError() {
+        if (!errorRequest)
+        {
+            errorRequest = true //Ha ocurrido un error
+            findViewById<Toolbar>(R.id.toolbar).visibility = View.INVISIBLE
+            findViewById<RecyclerView>(R.id.staticsRecyclerView).visibility = View.GONE
+            findViewById<TextView>(R.id.textViewReconnect).visibility = View.VISIBLE
+            findViewById<ProgressBar>(R.id.progressBarReconnect).visibility = View.INVISIBLE
+            findViewById<Button>(R.id.buttonReconnect).visibility = View.VISIBLE
         }
     }
 
@@ -306,5 +359,21 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
             // Create the AlertDialog
             builder.create()
         }
+    }
+
+    override fun afterBroadcast(address: String, port: String) {
+        val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)?: return
+        with(sharedPreferences.edit()) {
+            putString("address", address)
+            putString("port", port)
+            apply()
+        }
+        handler.removeCallbacksAndMessages(null)
+        startRequestStatics()
+    }
+
+    override fun errorBroadcast() {
+        findViewById<Button>(R.id.buttonReconnect).isEnabled = true
+        findViewById<ProgressBar>(R.id.progressBarReconnect).visibility = View.INVISIBLE
     }
 }

@@ -1,13 +1,24 @@
 package com.projectpcscanner.utils
 
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.view.WindowManager
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.projectpcscanner.R
 import kotlin.system.exitProcess
+
+
+const val channelID = "pc_scanner_server_channel"
+var notificationManager: NotificationManager? = null
+
 //FIXME En algunos dispositivos, el fullscreen hace que las animaciones se vean raras
 fun setActivityFullScreen(activity: Activity) {
     activity.window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
@@ -32,4 +43,30 @@ fun openWebNavigator(activity: Activity, url: String) {
         activity.startActivity(intent)
     }
 
+}
+
+private fun createNotificationChannel(activity: Activity) {
+    synchronized(activity::class.java){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name: CharSequence = activity.getString(R.string.app_name)// The user-visible name of the channel.
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(channelID, name, importance)
+            notificationManager = activity.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager!!.createNotificationChannel(channel)
+        }
+    }
+}
+
+fun createNotification(activity: Activity, contentTitle: String, contentText: String) {
+    if (notificationManager == null)
+        createNotificationChannel(activity)
+
+    val notification = NotificationCompat.Builder(activity, channelID)
+        .setSmallIcon(R.drawable.logo_foreground)
+        .setLargeIcon(BitmapFactory.decodeResource(activity.resources, R.drawable.logo_foreground))
+        .setContentTitle(contentTitle)
+        .setContentText(contentText)
+        .setChannelId(channelID).build()
+
+    notificationManager!!.notify(1, notification)
 }

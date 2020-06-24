@@ -15,34 +15,29 @@ import java.net.SocketTimeoutException
 class BroadcastTask(private val listener: BroadcastTaskListener): AsyncTask<Void, Void, List<String>>() {
     private lateinit var socket: DatagramSocket
     override fun doInBackground(vararg params: Void?): List<String>? {
-        var i = 0
         var packet: DatagramPacket? = null
-        while (i < 5) { // Kotlin no permite usar una variable externa para iterar sobre un bucle for...
-            socket = DatagramSocket(5001)
 
-            val message = listOf<String>(getDeviceName()!!, Build.VERSION.RELEASE, Build.VERSION.SDK_INT.toString()).joinToString()
-            packet = DatagramPacket(
-                message.toByteArray(), message.length,
-                getBroadcastAddress(), 5000
-            )
-            socket.send(packet)
+        socket = DatagramSocket(5001)
 
-            val buf = ByteArray(1024)
-            packet = DatagramPacket(buf, buf.size)
-            socket.soTimeout = 1000
-            try {
-                socket.receive(packet)
-                break
-            } catch (e: SocketTimeoutException) {
-                i++
-                socket.close()
-            }
-        }
-        if (i < 5 && packet != null) {
+        val message = listOf<String>(getDeviceName()!!, Build.VERSION.RELEASE, Build.VERSION.SDK_INT.toString()).joinToString()
+        packet = DatagramPacket(
+            message.toByteArray(), message.length,
+            getBroadcastAddress(), 5000
+        )
+        socket.send(packet)
+
+        val buf = ByteArray(1024)
+        packet = DatagramPacket(buf, buf.size)
+        socket.soTimeout = 5000
+        try {
+            socket.receive(packet)
+        } catch (e: SocketTimeoutException) {
             socket.close()
-            return listOf(String(packet.data, 0, packet.length), packet.address.hostAddress)
+            return null
         }
-        return null
+        socket.close()
+        return listOf(String(packet.data, 0, packet.length), packet.address.hostAddress)
+
     }
     @Throws(IOException::class)
     fun getBroadcastAddress(): InetAddress? {

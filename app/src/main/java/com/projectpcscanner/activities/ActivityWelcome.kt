@@ -27,14 +27,14 @@ class ActivityWelcome : AppCompatActivity(), RequestTask.RequestTaskListener {
         val address = sharedPreferences.getString("address", null)
         val port = sharedPreferences.getString("port", "5000")
 
-        if (address != null) {
+        if (address != null && port != null) {
             requestTask = RequestTask(this)
             requestTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "http://${address}", port, "")
         }
 
         val nextButton: FloatingActionButton = findViewById(R.id.nextFloatingButton)
         nextButton.setOnClickListener{
-            if (address != null)
+            if (address != null && port != null)
                 requestTask.cancel(true)
             val intent = Intent(this, ActivityLink::class.java)
             startActivity(intent)

@@ -28,7 +28,7 @@ class DialogFragmentNetworkError : DialogFragment() {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
 
-            val inflater = requireActivity().layoutInflater;
+            val inflater = requireActivity().layoutInflater
             val view = inflater.inflate(R.layout.dialog_network_error, null)
 
             val helpButton: ImageButton = view.findViewById(R.id.helpButtonNetworkError)

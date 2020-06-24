@@ -154,12 +154,10 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
     }
 
     override fun afterRequest(rawData: String, tag: String) {
-        Log.d("@@@@", "hola")
         afterBroadcast(ip, port)
     }
 
     override fun requestError() {
-        Log.d("@@@@", "adios")
         enableUI()
     }
 }

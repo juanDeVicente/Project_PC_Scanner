@@ -42,7 +42,13 @@
     <string name="delete_database_message">¿Estás seguro de querer borrar la base de datos? Esta opción no tiene vuelta atrás</string>
     <string name="reset_application">Resetear la aplicación</string>
     <string name="reset_application_message">¿Estás seguro de querer resetear la aplicación? Esta opción no tiene vuelta atrás</string>
+    <string name="device_connected_title">Dispositivo conectado</string>
+    <string name="device_connected">¡El dispositivo %1$s ha sido conectado!</string>
+    <string name="device_disconnected_title">Dispositivo desconectado</string>
+    <string name="device_disconnected">El dispositivo %1$s ha sido desconectado</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="reconnect">Reconectar</string>
+    <string name="reconnect_text">¡Ups! Parece que se ha perdido la conexión con el servidor</string>
 </resources>
