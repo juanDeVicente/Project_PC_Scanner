@@ -42,6 +42,8 @@ import java.util.*
 class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, NavigationView.OnNavigationItemSelectedListener, DatabaseDeleteTask.Listener,
     BroadcastTask.BroadcastTaskListener {
     private var staticsTag = "statics"
+    private var rebootTag = "reboot"
+    private var shutdownTag = "shutdown"
 
     private val map: MutableMap<String, StaticsModel> = mutableMapOf()
     private var visitedMap: MutableMap<String, Boolean> = mutableMapOf()
@@ -335,6 +337,20 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
             R.id.navigation_close -> {
                 showExitDialog().show()
                 return true
+            }
+            R.id.navigation_reboot -> {
+                val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)?: return false
+                val address = sharedPreferences.getString("address", null)
+                val port = sharedPreferences.getString("port", "5000")
+                val rebootTask = RequestTask(this)
+                rebootTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "http://${address}", port, "reboot", rebootTag)
+            }
+            R.id.navigation_shutdown -> {
+                val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)?: return false
+                val address = sharedPreferences.getString("address", null)
+                val port = sharedPreferences.getString("port", "5000")
+                val rebootTask = RequestTask(this)
+                rebootTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "http://${address}", port, "shutdown", shutdownTag)
             }
         }
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)

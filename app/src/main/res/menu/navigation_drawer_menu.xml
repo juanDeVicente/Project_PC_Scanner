@@ -36,5 +36,16 @@
                 android:title="@string/exit" />
         </menu>
     </item>
-
+    <item android:title="@string/actions">
+        <menu>
+            <item
+                android:id="@+id/navigation_reboot"
+                android:icon="@drawable/baseline_replay_24"
+                android:title="@string/reboot" />
+            <item
+                android:id="@+id/navigation_shutdown"
+                android:icon="@drawable/baseline_power_settings_new_24"
+                android:title="@string/shutdown" />
+        </menu>
+    </item>
 </menu>
