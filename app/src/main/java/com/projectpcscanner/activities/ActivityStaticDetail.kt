@@ -29,7 +29,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.utils.Utils
 import com.projectpcscanner.R
 import com.projectpcscanner.models.StaticsModel
-import com.projectpcscanner.recycleviewadapters.DetailsRecycleViewAdapter
+import adapters.recycleview.DetailsRecycleViewAdapter
 import com.projectpcscanner.tasks.DatabaseGetValuesTask
 import com.projectpcscanner.tasks.DatabaseValueTask
 import com.projectpcscanner.tasks.RequestTask
@@ -37,7 +37,6 @@ import com.projectpcscanner.utils.setActivityFullScreen
 import com.projectpcscanner.utils.toMap
 import com.vaibhavlakhera.circularprogressview.CircularProgressView
 import org.json.JSONArray
-import org.json.JSONObject
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -232,7 +231,8 @@ class ActivityStaticDetail : AppCompatActivity(), RequestTask.RequestTaskListene
         val layoutManager = LinearLayoutManager(this)
         detailRecyclerView.layoutManager = layoutManager
 
-        detailAdapter = DetailsRecycleViewAdapter(model.details)
+        detailAdapter =
+            DetailsRecycleViewAdapter(model.details)
         detailRecyclerView.adapter = detailAdapter
     }
 

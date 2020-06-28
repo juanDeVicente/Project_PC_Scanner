@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.projectpcscanner.R
 import com.projectpcscanner.models.PropertiesModel
-import com.projectpcscanner.recycleviewadapters.PropertiesRecycleViewAdapter
+import adapters.recycleview.PropertiesRecycleViewAdapter
 import com.projectpcscanner.tasks.RequestTask
 import com.projectpcscanner.utils.setActivityFullScreen
 import org.json.JSONArray
@@ -51,7 +51,8 @@ class ActivityProperties : AppCompatActivity(), RequestTask.RequestTaskListener 
         val layoutManager = LinearLayoutManager(this)
         findViewById<RecyclerView>(R.id.propertiesRecyclerView).layoutManager = layoutManager
 
-        adapter = PropertiesRecycleViewAdapter(properties.toList())
+        adapter =
+            PropertiesRecycleViewAdapter(properties.toList())
         findViewById<RecyclerView>(R.id.propertiesRecyclerView).adapter = adapter
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

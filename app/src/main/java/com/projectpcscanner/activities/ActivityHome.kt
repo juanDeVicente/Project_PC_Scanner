@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -24,18 +23,16 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.Visibility
 import com.google.android.material.navigation.NavigationView
 import com.projectpcscanner.R
 import com.projectpcscanner.models.StaticsModel
-import com.projectpcscanner.recycleviewadapters.StatsRecycleViewAdapter
+import adapters.recycleview.StatsRecycleViewAdapter
 import com.projectpcscanner.tasks.*
 import com.projectpcscanner.utils.createNotification
 import com.projectpcscanner.utils.exitApplication
 import com.projectpcscanner.utils.openWebNavigator
 import com.projectpcscanner.utils.setActivityFullScreen
 import org.json.JSONArray
-import org.json.JSONObject
 import java.util.*
 
 
@@ -310,6 +307,14 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
         when (item.itemId) {
             R.id.navigation_properties -> {
                 val intent = Intent(this, ActivityProperties::class.java)
+                startActivity(intent)
+                overridePendingTransition(
+                    R.anim.slide_in_right,
+                    R.anim.slide_out_left
+                )
+            }
+            R.id.navigation_tasks -> {
+                val intent = Intent(this, ActivityTasks::class.java)
                 startActivity(intent)
                 overridePendingTransition(
                     R.anim.slide_in_right,

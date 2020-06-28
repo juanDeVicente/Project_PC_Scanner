@@ -1,4 +1,4 @@
-package com.projectpcscanner.recycleviewadapters
+package adapters.recycleview
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.projectpcscanner.R
 import com.projectpcscanner.models.PropertiesModel
-import com.projectpcscanner.models.StaticsModel
 import com.projectpcscanner.utils.getStringFromResourceByName
 import java.util.*
 

@@ -1,6 +1,5 @@
-package com.projectpcscanner.recycleviewadapters
+package adapters.recycleview
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +7,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.projectpcscanner.R
 import com.projectpcscanner.utils.getStringFromResourceByName
-import java.lang.Exception
 
 
 class DetailsRecycleViewAdapter(private val details: Map<String, String>) : RecyclerView.Adapter<DetailsRecycleViewAdapter.MyViewHolder>() {
