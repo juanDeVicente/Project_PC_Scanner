@@ -1,4 +1,4 @@
-package adapters.recycleview
+package com.projectpcscanner.adapters.recycleview
 
 import android.app.Activity
 import android.app.ActivityOptions

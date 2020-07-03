@@ -26,7 +26,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.navigation.NavigationView
 import com.projectpcscanner.R
 import com.projectpcscanner.models.StaticsModel
-import adapters.recycleview.StatsRecycleViewAdapter
+import com.projectpcscanner.adapters.recycleview.StatsRecycleViewAdapter
 import com.projectpcscanner.tasks.*
 import com.projectpcscanner.utils.createNotification
 import com.projectpcscanner.utils.exitApplication

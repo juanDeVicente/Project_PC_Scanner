@@ -25,6 +25,7 @@
     <string name="close">Cerrar</string>
     <string name="nd_properties">Propiedades</string>
     <string name="nd_data">Datos</string>
+    <string name="nd_tasks">Procesos</string>
     <string name="nd_info">Acerca de</string>
     <string name="ndLogo">ndLogo</string>
     <string name="contact">Contacto</string>
@@ -49,9 +50,16 @@
     <string name="actions">Acciones</string>
     <string name="shutdown">Apagar PC</string>
     <string name="reboot">Reiniciar PC</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="reconnect">Reconectar</string>
     <string name="reconnect_text">¡Ups! Parece que se ha perdido la conexión con el servidor</string>
+    <string name="name">Nombre</string>
+    <string name="pid">PID</string>
+    <string name="user">Usuario</string>
+    <string name="memory">Memoria</string>
+    <string name="description">Descripción</string>
+    <string name="applications">Aplicaciones</string>
+    <string name="background_task">Procesos en segundo plano</string>
+    <string name="icon_image">iconImage</string>
+    <string name="todo">TODO</string>
+    <string name="introduce_filter">Introduce un filtro</string>
 </resources>

@@ -12,11 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.projectpcscanner.R
 import com.projectpcscanner.models.PropertiesModel
-import adapters.recycleview.PropertiesRecycleViewAdapter
+import com.projectpcscanner.adapters.recycleview.PropertiesRecycleViewAdapter
 import com.projectpcscanner.tasks.RequestTask
 import com.projectpcscanner.utils.setActivityFullScreen
 import org.json.JSONArray
-import org.json.JSONObject
 
 class ActivityProperties : AppCompatActivity(), RequestTask.RequestTaskListener {
 
@@ -60,7 +59,7 @@ class ActivityProperties : AppCompatActivity(), RequestTask.RequestTaskListener 
 
         val searchItem = menu?.findItem(R.id.searchProperties)
         val searchView = searchItem!!.actionView as SearchView
-        searchView.queryHint = "Introduce un filtro"
+        searchView.queryHint = getString(R.string.introduce_filter)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextChange(newText: String): Boolean {

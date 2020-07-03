@@ -29,7 +29,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.utils.Utils
 import com.projectpcscanner.R
 import com.projectpcscanner.models.StaticsModel
-import adapters.recycleview.DetailsRecycleViewAdapter
+import com.projectpcscanner.adapters.recycleview.DetailsRecycleViewAdapter
 import com.projectpcscanner.tasks.DatabaseGetValuesTask
 import com.projectpcscanner.tasks.DatabaseValueTask
 import com.projectpcscanner.tasks.RequestTask
