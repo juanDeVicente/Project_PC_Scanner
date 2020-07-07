@@ -62,4 +62,8 @@
     <string name="icon_image">iconImage</string>
     <string name="todo">TODO</string>
     <string name="introduce_filter">Introduce un filtro</string>
+    <string name="wake_on_lan">Encender el PC de forma remota</string>
+    <string name="wake_on_lan_text">Para encender el PC de forma remota se necesita la dirección MAC</string>
+    <string name="wake_on_lan_hint">Dirección MAC</string>
+    <string name="turn_on">Encender</string>
 </resources>

@@ -10,12 +10,15 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.projectpcscanner.R
@@ -41,6 +44,10 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
         super.onCreate(savedInstanceState)
         setActivityFullScreen(this)
         setContentView(R.layout.activity_link)
+
+        val toolbar: Toolbar = findViewById(R.id.linkToolbar)
+        toolbar.title = ""
+        setSupportActionBar(toolbar)
 
         val linkButton: Button = findViewById(R.id.linkButton)
         linkButton.setOnClickListener {
@@ -159,5 +166,22 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
 
     override fun requestError() {
         enableUI()
+    }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.link_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.wake_on_lan -> {
+                val intent = Intent(this, ActivityWakeOnLan::class.java)
+                startActivity(intent)
+                overridePendingTransition(
+                    R.anim.slide_in_right,
+                    R.anim.slide_out_left
+                )
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

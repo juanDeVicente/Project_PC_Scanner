@@ -5,10 +5,10 @@ import android.net.wifi.WifiManager
 import android.os.AsyncTask
 import android.os.Build
 import android.util.Log
+import com.projectpcscanner.utils.getBroadcastAddress
 import java.io.IOException
 import java.net.DatagramPacket
 import java.net.DatagramSocket
-import java.net.InetAddress
 import java.net.SocketTimeoutException
 
 
@@ -22,7 +22,7 @@ class BroadcastTask(private val listener: BroadcastTaskListener): AsyncTask<Void
         val message = listOf<String>(getDeviceName()!!, Build.VERSION.RELEASE, Build.VERSION.SDK_INT.toString()).joinToString()
         packet = DatagramPacket(
             message.toByteArray(), message.length,
-            getBroadcastAddress(), 5000
+            getBroadcastAddress(listener.getApplicationContext()), 5000
         )
         socket.send(packet)
 
@@ -39,19 +39,9 @@ class BroadcastTask(private val listener: BroadcastTaskListener): AsyncTask<Void
         return listOf(String(packet.data, 0, packet.length), packet.address.hostAddress)
 
     }
-    @Throws(IOException::class)
-    fun getBroadcastAddress(): InetAddress? {
-        val wifi: WifiManager = listener.getApplicationContext().getSystemService(Context.WIFI_SERVICE) as WifiManager
-        val info = wifi.dhcpInfo
-        val broadcast = info.ipAddress and info.netmask or info.netmask.inv()
-        val quads = ByteArray(4)
-        for (k in 0..3) quads[k] = (broadcast shr k * 8 and 0xFF).toByte()
-        return InetAddress.getByAddress(quads)
-    }
 
     override fun onPostExecute(result: List<String>?) {
         super.onPostExecute(result)
-        Log.d("broadcast", result.toString())
         if (result != null)
             listener.afterBroadcast(result[1], result[0])
         else
@@ -80,7 +70,7 @@ class BroadcastTask(private val listener: BroadcastTaskListener): AsyncTask<Void
 
 
     private fun capitalize(s: String?): String {
-        if (s == null || s.length == 0) {
+        if (s == null || s.isEmpty()) {
             return ""
         }
         val first = s[0]

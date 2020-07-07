@@ -15,7 +15,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".activities.ActivityTasks"></activity>
+        <activity android:name=".activities.ActivityWakeOnLan"></activity>
+        <activity android:name=".activities.ActivityTasks" />
         <activity android:name=".activities.ActivityData" />
         <activity android:name=".activities.ActivityProperties" />
         <activity android:name=".activities.ActivityStaticDetail" />
