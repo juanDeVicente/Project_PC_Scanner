@@ -2,50 +2,51 @@ package com.projectpcscanner.fragments.dialogs
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Patterns
 import android.view.View
-import androidx.fragment.app.Fragment
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.appcompat.app.AlertDialog
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import com.projectpcscanner.R
 import com.projectpcscanner.utils.openWebNavigator
 
-/**
- * A simple [Fragment] subclass.
- */
-class DialogIntroduceIP(private val listener: Listener) : DialogFragment(){
+class DialogAuthenticate(): DialogFragment() {
 
-    private lateinit var v: View
+    private lateinit var listener: Listener
     private lateinit var dialog: AlertDialog
+    private lateinit var v: View
 
     interface Listener {
-        fun retryConnection(ip: String, port: String)
+        fun authenticate(password: String)
         fun getActivity(): Activity
     }
-
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            listener = context as Listener
+        }
+        catch (e: ClassCastException) {
+            throw ClassCastException((context.toString() +
+                    " must implement NoticeDialogListener"))
+        }
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
 
             val inflater = requireActivity().layoutInflater
-            v = inflater.inflate(R.layout.dialog_introduce_ip, null)
-
-            val helpButton: ImageButton = v.findViewById(R.id.helpButtonIntroduceIP)
-            helpButton.setOnClickListener {
-                openWebNavigator(listener.getActivity(),"https://github.com/juanDeVicente")
-            }
+            v = inflater.inflate(R.layout.dialog_authenticate, null)
 
             builder.setView(v)
                 .setPositiveButton(getString(R.string.retry)) { _, _ ->
-                    listener.retryConnection(v.findViewById<EditText>(R.id.ipInput).text.toString(), v.findViewById<EditText>(R.id.portInput).text.toString())
+                    listener.authenticate(v.findViewById<EditText>(R.id.editTextPassword).text.toString())
                 }
                 .setNegativeButton(getString(R.string.exit)) { _, _ ->
                     dialog.dismiss()
@@ -54,16 +55,15 @@ class DialogIntroduceIP(private val listener: Listener) : DialogFragment(){
             return dialog
         } ?: throw IllegalStateException("Activity cannot be null")
     }
-
     override fun onStart() {
         super.onStart()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.GRAY)
 
-        val ipInput = v.findViewById<EditText>(R.id.ipInput)
-        ipInput.addTextChangedListener (object: TextWatcher{
+        val ipInput = v.findViewById<EditText>(R.id.editTextPassword)
+        ipInput.addTextChangedListener (object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (Patterns.IP_ADDRESS.matcher(s.toString()).matches()) {
+                if (s.toString().isNotEmpty()) {
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.WHITE)
                 }

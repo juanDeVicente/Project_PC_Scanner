@@ -17,8 +17,9 @@ import java.net.URL
 /**
  * No me convence el uso de Volley.RequestQueue por que cachea las peticiones http (?)
  */
-class RequestTask(private val listener: RequestTaskListener) : AsyncTask<String, Void, String>() {
+ class RequestTask(private val listener: RequestTaskListener) : AsyncTask<String, Void, String>() {
     private lateinit var tag: String
+    private var auth = false
 
     override fun doInBackground(vararg params: String?): String? {
         tag = try {
@@ -28,11 +29,14 @@ class RequestTask(private val listener: RequestTaskListener) : AsyncTask<String,
         } as String
 
         val url = URL("${params[0]}:${params[1]}/${params[2]}")
-        var response: String?
+        var response: String? = null
         val urlConnection: HttpURLConnection = url.openConnection() as HttpURLConnection
         urlConnection.connectTimeout = 1000
         try {
-            response = String(urlConnection.inputStream.readBytes())
+            if (urlConnection.responseCode == 401) // Unauthorized
+                auth = true
+            else
+                response = String(urlConnection.inputStream.readBytes())
         }
         catch (e: ConnectException)
         {
@@ -62,14 +66,16 @@ class RequestTask(private val listener: RequestTaskListener) : AsyncTask<String,
 
     override fun onPostExecute(result: String?) {
         super.onPostExecute(result)
-        if (result != null)
-            listener.afterRequest(result, this.tag)
-        else
-            listener.requestError()
+        when {
+            auth -> listener.requestAuthentication()
+            result != null -> listener.afterRequest(result, this.tag)
+            else -> listener.requestError()
+        }
     }
 
     interface RequestTaskListener{
         fun afterRequest(rawData: String, tag: String)
         fun requestError() {}
+        fun requestAuthentication() {}
     }
 }

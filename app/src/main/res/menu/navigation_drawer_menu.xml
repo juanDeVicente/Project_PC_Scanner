@@ -12,6 +12,11 @@
             android:icon="@drawable/baseline_settings_24"
             android:title="@string/nd_tasks" />
         <item
+            android:id="@+id/navigation_programs"
+            android:icon="@drawable/baseline_apps_24"
+            android:title="@string/nd_programs"
+            android:visible="true" />
+        <item
             android:id="@+id/navigation_data"
             android:icon="@drawable/baseline_timeline_24"
             android:title="@string/nd_data" />
@@ -28,7 +33,9 @@
                 android:title="@string/help" />
         </menu>
     </item>
-    <item android:title="@string/actions">
+    <item
+        android:title="@string/actions"
+        android:visible="true">
         <menu>
             <item
                 android:id="@+id/navigation_reboot"

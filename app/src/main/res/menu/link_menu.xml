@@ -4,4 +4,7 @@
     <item
         android:id="@+id/wake_on_lan"
         android:title="@string/wake_on_lan" />
+    <item
+        android:id="@+id/introduce_ip"
+        android:title="@string/introduce_ip_menu" />
 </menu>

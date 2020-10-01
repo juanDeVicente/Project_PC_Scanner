@@ -26,6 +26,7 @@
     <string name="nd_properties">Propiedades</string>
     <string name="nd_data">Datos</string>
     <string name="nd_tasks">Procesos</string>
+    <string name="nd_programs">Programas</string>
     <string name="nd_info">Acerca de</string>
     <string name="ndLogo">ndLogo</string>
     <string name="contact">Contacto</string>
@@ -66,4 +67,22 @@
     <string name="wake_on_lan_text">Para encender el PC de forma remota se necesita la dirección MAC</string>
     <string name="wake_on_lan_hint">Dirección MAC</string>
     <string name="turn_on">Encender</string>
+    <string name="executed_program_title">Programa lanzado</string>
+    <string name="executed_program_body">El programa seleccionado se ejecutó correctamente</string>
+    <string name="program_dialog_success_body">¡Programa lanzado correctamente!</string>
+    <string name="program_dialog_sucess_header">Programa lanzado</string>
+    <string name="introduce_ip_menu">Introducir IP manualmente</string>
+    <string name="introduce_password">Introducir contraseña</string>
+    <string name="introduce_password_text">Para poder conectar el PC y el móvil es necesaria una contraseña</string>
+    <string name="password">Contraseña</string>
+    <string name="snackbar_password_error_text">Error al introducir la contraseña</string>
+    <string name="number_of_process">Número de procesos</string>
+    <string name="builder">Fabricante</string>
+    <string name="drive_type">Tipo</string>
+    <string name="drive_format">Formateo</string>
+    <string name="upload_speed">Velocidad de subida</string>
+    <string name="download_speed">Velocidad de bajada</string>
+    <string name="os">Sistema operativo</string>
+    <string name="fixed">Disco</string>
+    <string name="removable">Extraíble</string>
 </resources>

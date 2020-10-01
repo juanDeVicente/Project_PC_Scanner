@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.media.Image
 import android.os.AsyncTask
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -29,18 +30,24 @@ import com.projectpcscanner.models.TasksModel
 import com.projectpcscanner.tasks.RequestTask
 import com.projectpcscanner.utils.setActivityFullScreen
 import org.json.JSONObject
+import java.lang.Exception
 
 
-class ActivityTasks : AppCompatActivity(), RequestTask.RequestTaskListener {
+class ActivityTasks : AppCompatActivity(), RequestTask.RequestTaskListener, TasksRecycleViewAdapter.Listener {
+    private val handlerTime = 1000L
+    private val handler = Handler()
+    private val maxServerError = 3
+    private var serverErrors = 0
+
     private val tasksTag = "tasks"
     private val deleteTag = "delete_task"
 
     private var listApplication: MutableList<TasksModel> = mutableListOf()
-    private val adapterApplications = TasksRecycleViewAdapter(listApplication)
+    private val adapterApplications = TasksRecycleViewAdapter(listApplication, this)
     private var isApplicationOpen = false
 
     private var listBackground: MutableList<TasksModel> = mutableListOf()
-    private val adapterBackground = TasksRecycleViewAdapter(listBackground)
+    private val adapterBackground = TasksRecycleViewAdapter(listBackground, this)
     private var isBackgroundOpen = false
 
     private lateinit var applicationsText: String
@@ -73,7 +80,7 @@ class ActivityTasks : AppCompatActivity(), RequestTask.RequestTaskListener {
         applicationsText = getString(R.string.applications)
         backgroundTaskText = getString(R.string.background_task)
 
-        initRequestTask()
+        initHandler()
         val buttonAnimationListener = View.OnClickListener {
 
             val rotate =
@@ -195,12 +202,12 @@ class ActivityTasks : AppCompatActivity(), RequestTask.RequestTaskListener {
         itemTouchHelperBackground.attachToRecyclerView(recycleViewBackground)
 
         running = true
-
     }
 
     override fun finish() {
         super.finish()
         running = false
+        handler.removeCallbacksAndMessages(null)
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -212,6 +219,7 @@ class ActivityTasks : AppCompatActivity(), RequestTask.RequestTaskListener {
 
     override fun afterRequest(rawData: String, tag: String) {
         if (tag  == tasksTag && sendTaskRequest) {
+            serverErrors = 0
             val obj = JSONObject(rawData)
             var array = obj.getJSONArray("applications")
 
@@ -232,34 +240,35 @@ class ActivityTasks : AppCompatActivity(), RequestTask.RequestTaskListener {
             array = obj.getJSONArray("process")
 
             for (i in 0 until array.length()) {
-                val task = TasksModel(array.getJSONObject(i))
-                val index = listBackground.indexOf(task)
-                if (index == -1)
-                    listBackground.add(task)
-                else
-                    listBackground[index] = task
+                try {
+                    val task = TasksModel(array.getJSONObject(i))
+                    val index = listBackground.indexOf(task)
+                    if (index == -1)
+                        listBackground.add(task)
+                    else
+                        listBackground[index] = task
+                    }
+                catch (e: Exception) {
+
+                }
             }
 
             if (!sendTaskRequest)
                 return
 
             adapterBackground.notifyDataSetChanged()
-
-            if (this.running) {
-                initRequestTask()
-            }
         }
-        else if (tag == deleteTag)
-        {
+        else if (tag == deleteTag) {
+            serverErrors = 0
             sendTaskRequest = true
-            initRequestTask()
-
+            initHandler()
         }
-
     }
 
     override fun requestError() {
-        this.finish()
+        serverErrors++
+        if (serverErrors >= maxServerError)
+            this.finish()
     }
 
     private fun initRequestTask() {
@@ -298,5 +307,25 @@ class ActivityTasks : AppCompatActivity(), RequestTask.RequestTaskListener {
             "tasks/${PID}",
             deleteTag
         )
+    }
+
+    private fun initHandler() {
+        handler.postDelayed(object: Runnable {
+            override fun run() {
+                initRequestTask()
+                handler.postDelayed(this, handlerTime)
+            }
+        }, 0)
+    }
+
+    override fun onItemPressed(adapter: TasksRecycleViewAdapter) {
+        if (adapter == adapterApplications || adapter == adapterBackground)
+            handler.removeCallbacksAndMessages(null)
+    }
+
+    override fun onItemReleased(adapter: TasksRecycleViewAdapter) {
+        Log.d("@@@", "hi")
+        if (adapter == adapterApplications || adapter == adapterBackground)
+            initHandler()
     }
 }

@@ -21,9 +21,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
 import com.projectpcscanner.R
+import com.projectpcscanner.fragments.dialogs.DialogAuthenticate
 import com.projectpcscanner.fragments.dialogs.DialogFragmentNetworkError
 import com.projectpcscanner.fragments.dialogs.DialogIntroduceIP
+import com.projectpcscanner.tasks.AuthenticationTask
 import com.projectpcscanner.tasks.BroadcastTask
 import com.projectpcscanner.tasks.HelloTask
 import com.projectpcscanner.tasks.RequestTask
@@ -31,7 +34,8 @@ import com.projectpcscanner.utils.exitApplication
 import com.projectpcscanner.utils.setActivityFullScreen
 
 
-class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, DialogFragmentNetworkError.DialogFragmentNetworkErrorListener, DialogIntroduceIP.Listener, RequestTask.RequestTaskListener{
+class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, DialogFragmentNetworkError.DialogFragmentNetworkErrorListener, DialogIntroduceIP.Listener, RequestTask.RequestTaskListener, DialogAuthenticate.Listener,
+    AuthenticationTask.Listener {
     /**
      * Variable que controla si se puede ir hacia atrás en la actividad
      */
@@ -135,17 +139,30 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
         progressbar.visibility = View.INVISIBLE
     }
 
+    private fun showIntroduceIPDialog() {
+        val introduceIP = DialogIntroduceIP(this)
+        introduceIP.show(supportFragmentManager, "introduceIP")
+    }
+
     override fun onPositiveButton() {
         startLink()
     }
 
     override fun onNeutralButton() {
-        val introduceIP = DialogIntroduceIP(this)
-        introduceIP.show(supportFragmentManager, "introduceIP")
+        showIntroduceIPDialog()
     }
 
     override fun onNegativeButton() {
         exitApplication(this)
+    }
+
+    override fun authenticate(password: String) {
+        val authenticationTask = AuthenticationTask(this)
+        val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)?: return
+        val address = sharedPreferences.getString("address", null)
+        val port = sharedPreferences.getString("port", "5000")
+
+        authenticationTask.execute(address, port, password, "authenticate")
     }
 
     override fun getActivity(): Activity {
@@ -157,6 +174,12 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
         val requestTask = RequestTask(this)
         this.ip = ip
         this.port = port
+        val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)?: return
+        with(sharedPreferences.edit()) {
+            putString("address", ip)
+            putString("port", port)
+            apply()
+        }
         requestTask.execute("http://${ip}", port, "")
     }
 
@@ -181,7 +204,31 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
                     R.anim.slide_out_left
                 )
             }
+            R.id.introduce_ip -> {
+                showIntroduceIPDialog()
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun requestAuthentication() {
+        enableUI()
+        val dialogAuthenticate = DialogAuthenticate()
+        dialogAuthenticate.show(supportFragmentManager, "authenticate")
+    }
+
+    override fun successAuthenticate() {
+        disableUI()
+        val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)?: return
+        val address = sharedPreferences.getString("address", null)
+        val port = sharedPreferences.getString("port", "5000")
+        retryConnection(address!!, port!!)
+    }
+
+    override fun wrongAuthenticate() {
+        Snackbar.make(findViewById(android.R.id.content), getString(R.string.snackbar_password_error_text), Snackbar.LENGTH_SHORT)
+            .setTextColor(resources.getColor(R.color.colorText))
+            .setBackgroundTint(resources.getColor(R.color.colorPrimary))
+            .show()
     }
 }

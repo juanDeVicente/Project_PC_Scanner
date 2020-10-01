@@ -218,8 +218,9 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
                 findViewById<RecyclerView>(R.id.staticsRecyclerView).visibility = View.VISIBLE
                 findViewById<TextView>(R.id.textViewReconnect).visibility = View.GONE
                 findViewById<ProgressBar>(R.id.progressBarReconnect).visibility = View.GONE
-                findViewById<Button>(R.id.buttonReconnect).isEnabled = true
-                findViewById<Button>(R.id.buttonReconnect).visibility = View.GONE
+                val button = findViewById<Button>(R.id.buttonReconnect)
+                button.isEnabled = true
+                button.visibility = View.GONE
             }
             val jsonObject = JSONArray(rawData)
 
@@ -315,6 +316,14 @@ class ActivityHome : AppCompatActivity(), RequestTask.RequestTaskListener, Navig
             }
             R.id.navigation_tasks -> {
                 val intent = Intent(this, ActivityTasks::class.java)
+                startActivity(intent)
+                overridePendingTransition(
+                    R.anim.slide_in_right,
+                    R.anim.slide_out_left
+                )
+            }
+            R.id.navigation_programs -> {
+                val intent = Intent(this, ActivityPrograms::class.java)
                 startActivity(intent)
                 overridePendingTransition(
                     R.anim.slide_in_right,
