@@ -31,6 +31,7 @@ import com.projectpcscanner.tasks.BroadcastTask
 import com.projectpcscanner.tasks.HelloTask
 import com.projectpcscanner.tasks.RequestTask
 import com.projectpcscanner.utils.exitApplication
+import com.projectpcscanner.utils.lockRotation
 import com.projectpcscanner.utils.setActivityFullScreen
 
 
@@ -57,8 +58,10 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
         linkButton.setOnClickListener {
             val permissionCheck: Int =
                 ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
-            if (permissionCheck == PackageManager.PERMISSION_GRANTED)
+            if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+                lockRotation(this, true)
                 startLink()
+            }
             else
                 ActivityCompat.requestPermissions(
                     this,
@@ -92,7 +95,8 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
     }
 
     override fun afterBroadcast(address: String, port: String) {
-        Log.d("IP", address)
+        lockRotation(this, false)
+
         val sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)?: return
         with(sharedPreferences.edit()) {
             putString("address", address)
@@ -108,6 +112,8 @@ class ActivityLink : AppCompatActivity(), BroadcastTask.BroadcastTaskListener, D
     }
 
     override fun errorBroadcast() {
+        lockRotation(this, false)
+
         val dialogFragmentNetworkError = DialogFragmentNetworkError()
         dialogFragmentNetworkError.show(supportFragmentManager, "networkError")
 

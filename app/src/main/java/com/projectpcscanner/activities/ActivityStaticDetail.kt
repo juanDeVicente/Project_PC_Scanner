@@ -33,6 +33,7 @@ import com.projectpcscanner.adapters.recycleview.DetailsRecycleViewAdapter
 import com.projectpcscanner.tasks.DatabaseGetValuesTask
 import com.projectpcscanner.tasks.DatabaseValueTask
 import com.projectpcscanner.tasks.RequestTask
+import com.projectpcscanner.utils.lockRotation
 import com.projectpcscanner.utils.setActivityFullScreen
 import com.projectpcscanner.utils.toMap
 import com.vaibhavlakhera.circularprogressview.CircularProgressView
@@ -57,6 +58,7 @@ class ActivityStaticDetail : AppCompatActivity(), RequestTask.RequestTaskListene
 
         super.onCreate(savedInstanceState)
         setActivityFullScreen(this)
+        lockRotation(this, true)
         setContentView(R.layout.activity_static_detail)
 
         val details = mutableMapOf<String, String>()
@@ -299,6 +301,11 @@ class ActivityStaticDetail : AppCompatActivity(), RequestTask.RequestTaskListene
 
     override fun getContext(): Context {
         return this
+    }
+
+    override fun onBackPressed() {
+        lockRotation(this, false)
+        super.onBackPressed()
     }
 
 }

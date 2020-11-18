@@ -6,6 +6,8 @@ import android.app.NotificationManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
@@ -69,4 +71,20 @@ fun createNotification(activity: Activity, contentTitle: String, contentText: St
         .setChannelId(channelID).build()
 
     notificationManager!!.notify(1, notification)
+}
+
+fun lockRotation(activity: Activity, value: Boolean) {
+    if (value)
+    {
+        val currentLocation = activity.resources.configuration.orientation
+        if (currentLocation == Configuration.ORIENTATION_LANDSCAPE)
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        else
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+    }
+    else
+    {
+        activity.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_USER
+    }
 }
